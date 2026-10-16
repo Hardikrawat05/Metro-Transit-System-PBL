@@ -5,8 +5,8 @@
 
 class StudentRegistry {
 private:
-    int studentIDs[100];
-    bool active[100];
+    int studentIDs[MAX_STUDENTS];
+    bool active[MAX_STUDENTS];
     int count;
 
 public:
