@@ -47,3 +47,4 @@ void StudentRegistry::displayStudents() {
         cout << studentIDs[i] << " - "
              << (active[i] ? "Active" : "Inactive") << endl;
 }
+
