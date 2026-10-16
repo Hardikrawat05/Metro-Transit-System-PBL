@@ -1,6 +1,4 @@
-#include<iostream>
-#include<string>
-#include<cmath>
+#include<bits/stdc++.h>
 using namespace std;
 
 class Passenger
