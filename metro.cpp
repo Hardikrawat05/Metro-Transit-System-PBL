@@ -494,8 +494,7 @@ void Metro::run()
                 break;
 
             case 3:
-                cout << "Thank you for using Metro Transit Manager."
-                     << endl;
+                cout << "Thank you . Visit again !"<< endl;
                 break;
 
             default:
