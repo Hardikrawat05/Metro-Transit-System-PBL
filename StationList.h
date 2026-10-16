@@ -30,5 +30,4 @@ public:
     int getCount();
     void displayStations();
 };
-
 #endif

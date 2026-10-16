@@ -31,5 +31,4 @@ public:
     wn *dequeue();
     void displayQueue();
 };
-
 #endif

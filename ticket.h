@@ -35,5 +35,4 @@ public:
 
     void displayTickets(StationList &stations);
 };
-
 #endif

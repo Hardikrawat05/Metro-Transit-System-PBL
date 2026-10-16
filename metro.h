@@ -9,7 +9,6 @@
 #include "WaitingQueue.h"
 #include "Actionstack.h"
 
-using namespace std;
 
 class Metro
 {
@@ -29,25 +28,18 @@ private:
     bool validRoute(int source, int destination);
     int calculateFare(int type, int source, int destination);
 
-    void createConfirmedTicket(
-        int id, string name, int type,
-        int source, int destination
-    );
-
+    void createConfirmedTicket(int id, string name, int type, int source, int destination );
     void bookTicket();
     void cancelTicket();
     void verifyBoarding();
     void processWaitingQueue();
     void startNextTrain();
-
     bool adminLogin();
     void adminMenu();
 
 public:
     Metro();
-
     void passengerMenu();
     void run();
 };
-
 #endif

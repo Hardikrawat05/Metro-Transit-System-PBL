@@ -17,7 +17,6 @@ TicketList::~TicketList()
     }
 }
 
-// Add a new ticket
 int TicketList::addTicket(int pass_id, string name,int type, int trainID,int source, int destination, int fare)
 {
     tn *node = new tn;
@@ -50,7 +49,6 @@ int TicketList::addTicket(int pass_id, string name,int type, int trainID,int sou
     return node->ticketID;
 }
 
-// Find ticket using ticket ID
 tn *TicketList::findTicket(int id)
 {
     tn *temp = head;
@@ -66,7 +64,6 @@ tn *TicketList::findTicket(int id)
     return NULL;
 }
 
-// Display all tickets
 void TicketList::displayTickets(StationList &stations)
 {
     tn *temp = head;

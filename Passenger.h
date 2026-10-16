@@ -38,5 +38,4 @@ public:
 
     int calculateFare(int distance) override;
 };
-
 #endif

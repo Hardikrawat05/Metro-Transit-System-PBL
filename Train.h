@@ -28,5 +28,4 @@ public:
     void startNextTrain();
     void displayStatus();
 };
-
 #endif
