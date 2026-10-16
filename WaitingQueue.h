@@ -1,6 +1,6 @@
 #ifndef WAITING_QUEUE_H
 #define WAITING_QUEUE_H
-#include "Common.h"
+#include "common.h"
 
 #include <iostream>
 #include <string>
