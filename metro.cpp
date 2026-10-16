@@ -1,4 +1,260 @@
 #include "metro.h"
+
+int Metro::read(string message)
+{
+    int value;
+
+    while (true)
+    {
+        cout << message;
+
+        if (cin >> value)
+            return value;
+
+        cout << "Invalid input. Enter a number." << endl;
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+}
+
+string Metro::readName(string message)
+{
+    string name;
+
+    cout << message;
+    cin >> ws;
+    getline(cin, name);
+
+    return name;
+}
+
+bool Metro::validRoute(int source, int destination)
+{
+    if (!stations.validStation(source) ||
+        !stations.validStation(destination))
+    {
+        cout << "Invalid station ID." << endl;
+        return false;
+    }
+
+    if (source == destination)
+    {
+        cout << "Source and destination must be different."
+             << endl;
+        return false;
+    }
+
+    return true;
+}
+
+int Metro::calculateFare(int type, int source, int destination)
+{
+    int distance = destination - source;
+
+    if (distance < 0)
+        distance = -distance;
+
+    int fare = distance * 10;
+
+    if (type == 2)
+        fare = fare / 2;
+
+    return fare;
+}
+
+void Metro::createConfirmedTicket(
+    int id, string name, int type, int source, int destination)
+{
+    if (!train.bookSeat())
+    {
+        waitingQueue.enqueue(
+            id, name, type, source, destination);
+        return;
+    }
+
+    int fare = calculateFare(type, source, destination);
+
+    int ticketID = tickets.addTicket(
+        id, name, type, train.getTrainID(),
+        source, destination, fare);
+
+    cout << endl << "========== METRO TICKET =========="
+         << endl;
+    cout << "Ticket ID: " << ticketID << endl;
+    cout << "Passenger: " << name << endl;
+    cout << "Passenger ID: " << id << endl;
+    cout << "Train ID: " << train.getTrainID() << endl;
+    cout << "Source: " << stations.getName(source) << endl;
+    cout << "Destination: " << stations.getName(destination)
+         << endl;
+    cout << "Fare: Rs. " << fare << endl;
+    cout << "Status: CONFIRMED" << endl;
+    cout << "==================================" << endl;
+
+    actions.push("Ticket booked: " + to_string(ticketID));
+}
+
+void Metro::bookTicket()
+{
+    stations.displayStations();
+
+    int id = read("Enter passenger ID: ");
+    string name = readName("Enter passenger name: ");
+
+    int source = read("Enter source station ID: ");
+    int destination = read("Enter destination station ID: ");
+
+    if (!validRoute(source, destination))
+        return;
+
+    int type = read(
+        "1. Regular passenger\n"
+        "2. Student passenger\n"
+        "Choose type: ");
+
+    if (type != 1 && type != 2)
+    {
+        cout << "Invalid passenger type." << endl;
+        return;
+    }
+
+    if (type == 2 && !students.isValidStudent(id))
+    {
+        cout << "Student ID is not registered or is inactive."
+             << endl;
+        cout << "Student discount cannot be applied." << endl;
+        return;
+    }
+
+    createConfirmedTicket(
+        id, name, type, source, destination);
+}
+
+void Metro::cancelTicket()
+{
+    int id = read("Enter Ticket ID to cancel: ");
+
+    tn *ticket = tickets.findTicket(id);
+
+    if (ticket == NULL)
+    {
+        cout << "Ticket not found." << endl;
+        return;
+    }
+
+    if (ticket->status != "CONFIRMED")
+    {
+        cout << "Only confirmed tickets can be cancelled."
+             << endl;
+        return;
+    }
+
+    if (ticket->trainID != train.getTrainID())
+    {
+        cout << "This ticket does not belong to the active train."
+             << endl;
+        return;
+    }
+
+    ticket->status = "CANCELLED";
+    train.releaseSeat();
+
+    cout << "Ticket cancelled successfully." << endl;
+    cout << "One seat is now available." << endl;
+
+    actions.push("Ticket cancelled: " + to_string(id));
+
+    processWaitingQueue();
+}
+
+void Metro::verifyBoarding()
+{
+    int id = read("Enter Ticket ID: ");
+
+    tn *ticket = tickets.findTicket(id);
+
+    if (ticket == NULL)
+    {
+        cout << "Ticket not found. Entry denied." << endl;
+        return;
+    }
+
+    if (ticket->status != "CONFIRMED")
+    {
+        cout << "Ticket is not valid for boarding." << endl;
+        cout << "Current status: " << ticket->status << endl;
+        return;
+    }
+
+    if (ticket->trainID != train.getTrainID())
+    {
+        cout << "Ticket belongs to another train." << endl;
+        return;
+    }
+
+    ticket->status = "BOARDED";
+    train.boardPassenger();
+
+    cout << "Ticket verified. Boarding allowed." << endl;
+    cout << "Passenger: " << ticket->passengerName << endl;
+    cout << "Train ID: " << ticket->trainID << endl;
+
+    actions.push(
+        "Passenger boarded using ticket: " + to_string(id));
+}
+
+void Metro::processWaitingQueue()
+{
+    while (!waitingQueue.isEmpty() && train.hasSeat())
+    {
+        wn *passenger = waitingQueue.dequeue();
+
+        cout << endl
+             << "Offering a seat to waiting passenger: "
+             << passenger->name << endl;
+
+        createConfirmedTicket(
+            passenger->pass_id,
+            passenger->name,
+            passenger->type,
+            passenger->source,
+            passenger->destination);
+
+        delete passenger;
+    }
+
+    if (!waitingQueue.isEmpty())
+        cout << "Some passengers remain in the waiting queue."
+             << endl;
+}
+
+void Metro::startNextTrain()
+{
+    train.startNextTrain();
+
+    cout << "Next train started successfully." << endl;
+    cout << "New Train ID: " << train.getTrainID() << endl;
+
+    actions.push(
+        "Started train: " + to_string(train.getTrainID()));
+
+    processWaitingQueue();
+}
+
+bool Metro::adminLogin()
+{
+    string password = readName("Enter admin password: ");
+
+    if (password == adminpass)
+    {
+        cout << "Logging in." << endl;
+        return true;
+    }
+
+    cout << "Incorrect password." << endl;
+    return false;
+}
+
 void Metro::adminMenu()
 {
     if (!adminLogin())
@@ -8,7 +264,8 @@ void Metro::adminMenu()
 
     do
     {
-        cout << endl << "========== ADMIN MENU ==========" << endl;
+        cout << endl << "========== ADMIN MENU =========="
+             << endl;
         cout << "1. Add Station" << endl;
         cout << "2. Display Stations" << endl;
         cout << "3. Search Station" << endl;
@@ -32,7 +289,8 @@ void Metro::adminMenu()
 
                 if (stations.addStation(name))
                 {
-                    cout << "Station added successfully." << endl;
+                    cout << "Station added successfully."
+                         << endl;
                     actions.push("Added station: " + name);
                 }
                 else
@@ -69,10 +327,8 @@ void Metro::adminMenu()
                 {
                     cout << "Student ID registered/reactivated."
                          << endl;
-
                     actions.push(
-                        "Registered student: " + to_string(id)
-                    );
+                        "Registered student: " + to_string(id));
                 }
                 else
                     cout << "Invalid or Duplicate ID." << endl;
@@ -82,18 +338,18 @@ void Metro::adminMenu()
 
             case 5:
             {
-                int id = read("Enter student ID to deactivate: ");
+                int id =
+                    read("Enter student ID to deactivate: ");
 
                 if (students.deactivateStudent(id))
                 {
                     cout << "Student ID deactivated." << endl;
-
                     actions.push(
-                        "Deactivated student: " + to_string(id)
-                    );
+                        "Deactivated student: " + to_string(id));
                 }
                 else
-                    cout << "Active student ID not found." << endl;
+                    cout << "Active student ID not found."
+                         << endl;
 
                 break;
             }
@@ -149,7 +405,8 @@ void Metro::passengerMenu()
 
     do
     {
-        cout << endl << "========== PASSENGER MENU =========="<< endl;
+        cout << endl << "========== PASSENGER MENU =========="
+             << endl;
         cout << "1. Display Stations" << endl;
         cout << "2. Search Station" << endl;
         cout << "3. Book Ticket" << endl;
@@ -213,6 +470,7 @@ void Metro::passengerMenu()
 void Metro::run()
 {
     int choice;
+
     do
     {
         cout << endl;
@@ -223,7 +481,8 @@ void Metro::run()
         cout << "2. Admin Menu" << endl;
         cout << "3. Exit" << endl;
 
-        choice = read("Choose : ");
+        choice = read("Choose: ");
+
         switch (choice)
         {
             case 1:
