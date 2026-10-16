@@ -1,7 +1,7 @@
 #ifndef TICKET_H
 #define TICKET_H
 #include "Common.h"
-#include "Station.h"
+#include "StationList.h"
 
 typedef struct TicketNode
 {
