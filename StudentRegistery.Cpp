@@ -1,5 +1,5 @@
 #include "common.h"
-#include "StudentRegistry.h"
+#include "StudentRegistery.h"
 
 StudentRegistry::StudentRegistry() {
     count = 0;
