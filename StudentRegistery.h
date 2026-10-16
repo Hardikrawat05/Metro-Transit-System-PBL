@@ -16,4 +16,5 @@ public:
     bool deactivateStudent(int id);
     void displayStudents();
 };
+#endif
 
