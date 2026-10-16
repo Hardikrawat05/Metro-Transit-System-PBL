@@ -5,7 +5,7 @@
 
 class ActionStack {
 private:
-    string actions[100];
+    string actions[MAX_ACTIONS];
     int top;
 
 public:
