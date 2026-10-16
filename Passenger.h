@@ -1,6 +1,6 @@
 #ifndef PASSENGER_H
 #define PASSENGER_H
-#include "Common.h"
+#include "common.h"
 
 #include <string>
 using namespace std;
