@@ -42,7 +42,7 @@ void WaitingQueue::enqueue(int id, string name, int type, int source, int destin
         rear = node;
     }
 
-    cout << "Passenger added to waiting queue." << endl;
+    cout << "Ticket in waiting." << endl;
 }
 
 wn *WaitingQueue::dequeue()
