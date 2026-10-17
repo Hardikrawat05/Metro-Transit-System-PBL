@@ -1,0 +1,55 @@
+# Station ID  Station Name
+1 Kashmiri Gate
+2 Rajiv Chowk
+3 Dwarka
+4 New Delhi
+5 Chandni Chowk
+6 Central Secretariat
+7 Patel Chowk
+8 Vishwavidyalaya
+9 Civil Lines
+10 Chawri Bazar
+11 Kashmere Gate
+12 Shastri Park
+13 Seelampur
+14 Welcome
+15 Shahdara
+16 Mansarovar Park
+17 Jhilmil
+18 Dilshad Garden
+19 Noida Sector 15
+20 Noida Sector 16
+21 Noida Sector 18
+22 Botanical Garden
+23 Yamuna Bank
+24 Indraprastha
+25 Pragati Maidan
+26 Mandi House
+27 Barakhamba Road
+28 Karol Bagh
+29 Jhandewalan
+30 R.K. Ashram Marg
+31 Patel Nagar
+32 Rajendra Place
+33 Moti Nagar
+34 Kirti Nagar
+35 Rajouri Garden
+36 Janakpuri West
+37 Uttam Nagar East
+38 Dwarka Mor
+39 Dwarka Sector 21
+40 AIIMS
+41 Green Park
+42 Hauz Khas
+43 Malviya Nagar
+44 Saket
+45 Qutab Minar
+46 Huda City Centre
+47 Lajpat Nagar
+48 Nehru Place
+49 Kalkaji Mandir
+50 Okhla
+51 Jasola Apollo
+52 Sarita Vihar
+53 Badarpur Border
+54 Anand Vihar
