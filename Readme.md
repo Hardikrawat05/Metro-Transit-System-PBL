@@ -14,20 +14,27 @@ The whole project is written in **C++**, with **no STL containers** (no `std::ve
 
 ```text
 Metro-Transit-System-PBL/
-├── metro.h        shared header: every struct, class and function declaration
-├── journey.cpp    Member 1: graph (Dijkstra, BFS), DFS, binary search, doubly linked list
-│                  + route planning, fare classes, stations and lines, starting data
-├── tickets.cpp    Member 2: heap, hash table, BST, AVL tree
-│                  + booking, cancelling, priority waiting list, students, women's cards, trains
-├── cards.cpp      Member 3: singly linked list, queue, stack, deque
-│                  + smart cards, admin login, undo, activity log, saving and loading
-├── reports.cpp    Member 4: merge sort, quick sort, circular queue
-│                  + reports, simulation, menus and screen, Array<T>, main()
-├── data/          starting data you can edit (see "Starting data")
+├── metro.h                         shared header: every struct, class and function declaration
+├── journey/                        Member 1: journey and network
+│   ├── ds/       graph_dijkstra_bfs.cpp, dfs.cpp, binary_search.cpp, doubly_linked_list.cpp
+│   └── classes/  fare_policy.cpp, seed_loader.cpp, metro_network.cpp
+├── tickets/                        Member 2: tickets and waiting list
+│   ├── ds/       heap_priority_queue.cpp, hash_table.cpp, bst.cpp, avl_tree.cpp
+│   └── classes/  ticket_booking.cpp, students_women_cards.cpp, trains.cpp
+├── cards/                          Member 3: smart cards and storage
+│   ├── ds/       linked_list.cpp, queue.cpp, stack.cpp, deque.cpp
+│   └── classes/  smart_cards.cpp, admin_undo.cpp, storage.cpp, clock.cpp
+├── reports/                        Member 4: reports and interface
+│   ├── ds/       merge_sort.cpp, quick_sort.cpp, circular_queue.cpp
+│   └── classes/  reports.cpp, simulation.cpp, ui.cpp, app_menus.cpp, main.cpp
+├── data/                           starting data you can edit (see "Starting data")
 └── tests/
-    ├── test_ds.cpp       tests for every data structure
-    └── test_metro.cpp    tests for the application rules
+    ├── test_ds.cpp                 tests for every data structure
+    └── test_metro.cpp              tests for the application rules
 ```
+
+In every member folder, `ds/` has one file per data structure and `classes/` has one file per
+feature that uses them.
 
 ### One shared header
 
@@ -51,34 +58,34 @@ logic testable.
 
 | # | Feature | Data structure / concept | Where |
 |---|---------|--------------------------|-------|
-| 1 | Route finder (shortest distance) | Graph + Dijkstra with min-heap | `journey.cpp`, `tickets.cpp` |
-| 2 | Line-change guide, fewest-stops route | Graph + BFS with queue | `journey.cpp`, `cards.cpp` |
-| 3 | Smart cards: issue, balance, recharge | Hash table | `tickets.cpp`, `cards.cpp` |
+| 1 | Route finder (shortest distance) | Graph + Dijkstra with min-heap | `journey/`, `tickets/` |
+| 2 | Line-change guide, fewest-stops route | Graph + BFS with queue | `journey/`, `cards/` |
+| 3 | Smart cards: issue, balance, recharge | Hash table | `tickets/`, `cards/` |
 | 4 | Tap in / tap out, fare by real distance | Hash table + Dijkstra | `Metro::tapOut` |
-| 5 | Distance-based fare slabs | Polymorphism | `journey.cpp` |
+| 5 | Distance-based fare slabs | Polymorphism | `journey/` |
 | 6 | Day and monthly passes | Polymorphism (discounted price) | `Metro::buyPass` |
 | 7 | Ticket validity (2 hours) and auto-expiry | Hash table iteration | `Metro::expireOldTickets` |
-| 8 | Journey history (last 10 trips) | Linked list | `cards.cpp` |
+| 8 | Journey history (last 10 trips) | Linked list | `cards/` |
 | 9 | Block lost card, move balance to a new card | Hash table | `Metro::blockAndTransfer` |
-| 10 | Priority waiting list: senior/disabled first, then women (verified card), then students, then regular; first come, first served within a level | Heap with two keys | `tickets.cpp`, `Metro::waitPriority` |
+| 10 | Priority waiting list: senior/disabled first, then women (verified card), then students, then regular; first come, first served within a level | Heap with two keys | `tickets/`, `Metro::waitPriority` |
 | 11 | Several lines and trains, next-train timetable | Per-line state | `Metro::nextTrain` |
 | 12 | Crowd level per train | Occupancy % | `Metro::crowdLevel` |
-| 13 | Undo admin actions | Stack | `cards.cpp`, `Metro::undoLast` |
+| 13 | Undo admin actions | Stack | `cards/`, `Metro::undoLast` |
 | 14 | Reports: revenue, busiest stations, popular routes | Hash-table counting + merge sort | `Metro::buildReport` |
-| 15 | Close a station; routes avoid it | Graph vertex flag | `journey.cpp` |
-| 16 | Hidden password input, lockout after 3 wrong tries | Hashing, terminal control | `reports.cpp`, `Metro::adminLogin` |
-| 17 | Save and load all data | File handling | `cards.cpp` |
-| 18 | Rush-hour simulation with a fixed-size platform and a gate queue | Circular queue + FIFO queue | `reports.cpp` |
-| 19 | Colours, tables, clear screen | ANSI codes | `reports.cpp` |
+| 15 | Close a station; routes avoid it | Graph vertex flag | `journey/` |
+| 16 | Hidden password input, lockout after 3 wrong tries | Hashing, terminal control | `reports/`, `Metro::adminLogin` |
+| 17 | Save and load all data | File handling | `cards/` |
+| 18 | Rush-hour simulation with a fixed-size platform and a gate queue | Circular queue + FIFO queue | `reports/` |
+| 19 | Colours, tables, clear screen | ANSI codes | `reports/` |
 | 20 | Automatic tests | Unit tests | `tests/` |
-| 21 | Safety check before closing a station: which stations would be cut off | DFS (recursive and iterative) | `journey.cpp`, `Metro::stationsCutOffIfClosed` |
-| 22 | All tickets in ID order; tickets in an ID range; BST and AVL heights compared in Reports | AVL tree (rotations), in-order traversal and range search; plain BST for comparison | `tickets.cpp` |
-| 23 | Find a station by name (any case); "Did you mean ...?" hints | Binary search on a sorted index | `journey.cpp` |
-| 24 | Line view in both directions; "towards ..." in every route | Doubly linked list | `journey.cpp`, `Metro::buildLineList` |
-| 25 | Tickets sorted by fare | Quick sort (median of three) | `reports.cpp` |
-| 26 | Recent activity log that keeps the newest 200 entries | Deque | `cards.cpp` |
+| 21 | Safety check before closing a station: which stations would be cut off | DFS (recursive and iterative) | `journey/`, `Metro::cutOffStations` |
+| 22 | All tickets in ID order; tickets in an ID range; BST and AVL heights compared in Reports | AVL tree (rotations), in-order traversal and range search; plain BST for comparison | `tickets/` |
+| 23 | Find a station by name (any case); "Did you mean ...?" hints | Binary search on a sorted index | `journey/` |
+| 24 | Line view in both directions; "towards ..." in every route | Doubly linked list | `journey/`, `Metro::makeLineList` |
+| 25 | Tickets sorted by fare | Quick sort (median of three) | `reports/` |
+| 26 | Recent activity log that keeps the newest 200 entries | Deque | `cards/` |
 | 27 | Verified women's cards: register, deactivate, undo; priority on the waiting list | Hash table + heap | `Metro::registerWomenCard`, `Metro::waitPriority` |
-| 28 | Starting data (stations, tracks, students, women's cards, cards) read from editable text files | File handling (`ifstream`) | `journey.cpp`, `data/` |
+| 28 | Starting data (stations, tracks, students, women's cards, cards) read from editable text files | File handling (`ifstream`) | `journey/`, `data/` |
 | 29 | Bigger network: 6 lines, 29 stations, a ring (loop) line | Graph; loop detection | `data/connections.txt`, `Metro::isLoopLine` |
 | 30 | Ticket design: box, route with line changes, fare breakdown; the right border stays straight with emoji | UTF-8 display width | `App::printTicket`, `ui::displayWidth` |
 
@@ -88,11 +95,25 @@ You need `g++` (C++17). On Windows, use MinGW-w64.
 
 Run these two commands from the project folder. They work the same on Windows, Linux and macOS.
 
-```bash
-g++ -std=c++17 -I. journey.cpp tickets.cpp cards.cpp reports.cpp -o metro
+Windows PowerShell:
+
+```powershell
+g++ -std=c++17 -I. (Get-ChildItem journey,tickets,cards,reports -Recurse -Filter *.cpp).FullName -o metro
 ```
 
-This compiles the four `.cpp` files and links them into one program. Run it again whenever you change the code.
+Linux / macOS:
+
+```bash
+g++ -std=c++17 -I. $(find journey tickets cards reports -name "*.cpp") -o metro
+```
+
+If the short command does not work, list every file (works everywhere):
+
+```bash
+g++ -std=c++17 -I. cards/classes/admin_undo.cpp cards/classes/clock.cpp cards/classes/smart_cards.cpp cards/classes/storage.cpp cards/ds/deque.cpp cards/ds/linked_list.cpp cards/ds/queue.cpp cards/ds/stack.cpp journey/classes/fare_policy.cpp journey/classes/metro_network.cpp journey/classes/seed_loader.cpp journey/ds/binary_search.cpp journey/ds/dfs.cpp journey/ds/doubly_linked_list.cpp journey/ds/graph_dijkstra_bfs.cpp reports/classes/app_menus.cpp reports/classes/main.cpp reports/classes/reports.cpp reports/classes/simulation.cpp reports/classes/ui.cpp reports/ds/circular_queue.cpp reports/ds/merge_sort.cpp reports/ds/quick_sort.cpp tickets/classes/students_women_cards.cpp tickets/classes/ticket_booking.cpp tickets/classes/trains.cpp tickets/ds/avl_tree.cpp tickets/ds/bst.cpp tickets/ds/hash_table.cpp tickets/ds/heap_priority_queue.cpp -o metro
+```
+
+This finds every `.cpp` file in the four member folders, compiles them and links them into one program. Run it again whenever you change the code.
 Start the program:
 
 ```bash
@@ -219,17 +240,25 @@ still comes from the passenger type, so a woman student pays the student fare.
 
 ## Testing
 
-There are two test programs. Run the commands below. `-DMETRO_NO_MAIN` leaves out the program's own `main()` (in `reports.cpp`), because each test program has its own.
+There are two test programs. Run the commands below. `-DMETRO_NO_MAIN` leaves out the program's own `main()` (in `reports/classes/main.cpp`), because each test program has its own.
 
-```bash
-g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_ds.cpp journey.cpp tickets.cpp cards.cpp reports.cpp -o test_ds
-./test_ds
+Windows PowerShell:
 
-g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_metro.cpp journey.cpp tickets.cpp cards.cpp reports.cpp -o test_metro
-./test_metro
+```powershell
+$src = (Get-ChildItem journey,tickets,cards,reports -Recurse -Filter *.cpp).FullName
+g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_ds.cpp $src -o test_ds
+.\test_ds.exe
+g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_metro.cpp $src -o test_metro
+.\test_metro.exe
 ```
 
-On Windows, run them as `.\test_ds.exe` and `.\test_metro.exe`.
+Linux / macOS:
+
+```bash
+src=$(find journey tickets cards reports -name "*.cpp")
+g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_ds.cpp $src -o test_ds && ./test_ds
+g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_metro.cpp $src -o test_metro && ./test_metro
+```
 
 - **`test_ds.cpp`:** about 12,400 checks covering every data structure. These include FIFO/LIFO
   order, the heap's priority tie-break, 10,000 hash-table entries with resizing, sort
@@ -253,15 +282,15 @@ to every command above.
 ## Team responsibilities
 
 Every member worked on both parts of the project: data structures and application features.
-Each member has one `.cpp` file: the data structures come first, followed by the features that use
-them. The shared header `metro.h` is divided into one section per member.
+Each member has a folder with `ds/` (one file per data structure) and `classes/` (one file per
+feature). The shared header `metro.h` is divided into one section per member.
 
-| Member | File | Data structures | Features |
-|--------|------|-----------------|----------|
-| **Member 1: Journey and network (Team Lead)** | `journey.cpp` | Graph with Dijkstra and BFS, DFS, binary search, doubly linked list | Route planning, fare classes (inheritance and polymorphism), stations, lines and tracks, station closure check, line view, reading the `data/` files |
-| **Member 2: Tickets and waiting list** | `tickets.cpp` | Heap (priority queue), hash table, BST, AVL tree | Booking, cancelling, boarding, ticket expiry, priority waiting list, students, women's cards, trains |
-| **Member 3: Smart cards and storage** | `cards.cpp` | Singly linked list, queue, stack, deque | Smart cards, tap in and out, passes, lost cards, admin login, undo, activity log, saving and loading files |
-| **Member 4: Reports and interface** | `reports.cpp` | Merge sort, quick sort, circular queue | Reports, rush-hour simulation, menus and screen, ticket design, `Array<T>` template, `main()`; plus the tests |
+| Member | Data structures (`ds/`) | Features (`classes/`) |
+|--------|-------------------------|-----------------------|
+| **Member 1: Journey and network (Team Lead)** | `journey/ds/`: graph with Dijkstra and BFS, DFS, binary search, doubly linked list | `journey/classes/`: fare classes (inheritance and polymorphism), reading the `data/` files, stations, lines, routes, station closure check, line view |
+| **Member 2: Tickets and waiting list** | `tickets/ds/`: heap (priority queue), hash table, BST, AVL tree | `tickets/classes/`: booking, cancelling, boarding, ticket expiry, priority waiting list, students, women's cards, trains |
+| **Member 3: Smart cards and storage** | `cards/ds/`: singly linked list, queue, stack, deque | `cards/classes/`: smart cards, tap in and out, passes, lost cards, admin login, undo, activity log, saving and loading files, clock |
+| **Member 4: Reports and interface** | `reports/ds/`: merge sort, quick sort, circular queue | `reports/classes/`: reports, rush-hour simulation, screen and input, menus and ticket design, `main()`; plus the tests |
 
 ## Time complexity
 
@@ -308,5 +337,7 @@ them. The shared header `metro.h` is divided into one section per member.
 - **Concurrency:** only one program instance should use a data file at a time.
 
 ## Contributors
-
-Developed by a team of four as part of the PBL programme .
+Hardik Rawat
+Aaryan Rawat
+Alok Singh
+Saloni Bisht
