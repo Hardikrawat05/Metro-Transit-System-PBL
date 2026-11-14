@@ -9,7 +9,7 @@
 
 struct EdgeNode {
     int to;
-    int dist_m;
+    int meters;
     int line;
     struct EdgeNode *next;
 };
@@ -26,51 +26,51 @@ struct Line {
 
 struct Graph {
     Station *stations;
-    int station_count;
-    int station_capacity;
+    int stationCount;
+    int stationCapacity;
     Line *lines;
-    int line_count;
-    int line_capacity;
+    int lineCount;
+    int lineCapacity;
 };
 
 struct Route {
     int length;
     int *stations;
     int *lines;
-    long long total_m;
+    long long totalMeters;
 };
 
-Graph *graph_create(void);
-void graph_destroy(Graph *g);
+Graph *newGraph(void);
+void freeGraph(Graph *g);
 
-int graph_add_line(Graph *g, const char *name);
-int graph_line_count(const Graph *g);
-const char *graph_line_name(const Graph *g, int line);
+int graphAddLine(Graph *g, const char *name);
+int graphLineCount(const Graph *g);
+const char *graphLineName(const Graph *g, int line);
 
-int graph_add_station(Graph *g, const char *name);
-bool graph_remove_last_station(Graph *g);
-int graph_station_count(const Graph *g);
-bool graph_valid_station(const Graph *g, int id);
-const char *graph_station_name(const Graph *g, int id);
-bool graph_is_open(const Graph *g, int id);
-bool graph_set_open(Graph *g, int id, bool open);
-int graph_find_station(const Graph *g, const char *name);
-int graph_station_lines(const Graph *g, int id, int *out, int max_out);
+int graphAddStation(Graph *g, const char *name);
+bool graphRemoveLastStation(Graph *g);
+int graphStationCount(const Graph *g);
+bool graphHasStation(const Graph *g, int id);
+const char *graphStationName(const Graph *g, int id);
+bool graphIsOpen(const Graph *g, int id);
+bool graphSetOpen(Graph *g, int id, bool open);
+int graphFindStation(const Graph *g, const char *name);
+int graphStationLines(const Graph *g, int id, int *out, int maxOut);
 
-bool graph_add_edge(Graph *g, int a, int b, int dist_m, int line);
-bool graph_remove_edge(Graph *g, int a, int b, int line);
-bool graph_has_edge(const Graph *g, int a, int b, int line);
-const EdgeNode *graph_edges(const Graph *g, int id);
+bool graphAddTrack(Graph *g, int a, int b, int meters, int line);
+bool graphRemoveTrack(Graph *g, int a, int b, int line);
+bool graphHasTrack(const Graph *g, int a, int b, int line);
+const EdgeNode *graphTracks(const Graph *g, int id);
 
-void route_init(Route *r);
-void route_free(Route *r);
-bool graph_shortest_path(const Graph *g, int src, int dst, bool allow_closed, Route *out);
-bool graph_fewest_stops(const Graph *g, int src, int dst, bool allow_closed, Route *out);
+void initRoute(Route *r);
+void freeRoute(Route *r);
+bool dijkstraRoute(const Graph *g, int src, int dst, bool allowClosed, Route *out);
+bool bfsRoute(const Graph *g, int src, int dst, bool allowClosed, Route *out);
 
-int dfs_count_reachable_recursive(const Graph *g, int start, int blocked, bool *visited);
-int dfs_count_reachable_iterative(const Graph *g, int start, int blocked, bool *visited);
+int dfsCountRecursive(const Graph *g, int start, int blocked, bool *visited);
+int dfsCountLoop(const Graph *g, int start, int blocked, bool *visited);
 
-int dfs_components(const Graph *g, int blocked, int *component_of);
+int dfsGroups(const Graph *g, int blocked, int *groupOf);
 
 struct StationIndexEntry {
     char key[GRAPH_NAME_MAX];
@@ -82,13 +82,13 @@ struct StationIndex {
     int count;
 };
 
-StationIndex *station_index_create(void);
-bool station_index_build(StationIndex *index, const Graph *g);
-int station_index_find(const StationIndex *index, const char *name);
-int station_index_find_recursive(const StationIndex *index, const char *name);
-int station_index_prefix(const StationIndex *index, const char *prefix, int *out_ids,
-                         int max_out);
-void station_index_destroy(StationIndex *index);
+StationIndex *newStationIndex(void);
+bool buildStationIndex(StationIndex *index, const Graph *g);
+int findInIndex(const StationIndex *index, const char *name);
+int findInIndexRecursive(const StationIndex *index, const char *name);
+int findByPrefix(const StationIndex *index, const char *prefix, int *outIds,
+                         int maxOut);
+void freeStationIndex(StationIndex *index);
 
 struct DNode {
     int value;
@@ -102,15 +102,15 @@ struct DList {
     size_t size;
 };
 
-DList *dlist_create(void);
-bool dlist_push_back(DList *list, int value);
-bool dlist_push_front(DList *list, int value);
-bool dlist_remove(DList *list, int value);
-int dlist_index_of(const DList *list, int value);
-bool dlist_contains(const DList *list, int value);
-size_t dlist_size(const DList *list);
-void dlist_clear(DList *list);
-void dlist_destroy(DList *list);
+DList *newDList(void);
+bool dlistAddBack(DList *list, int value);
+bool dlistAddFront(DList *list, int value);
+bool dlistRemove(DList *list, int value);
+int dlistIndexOf(const DList *list, int value);
+bool dlistContains(const DList *list, int value);
+size_t dlistSize(const DList *list);
+void dlistClear(DList *list);
+void freeDList(DList *list);
 
 // ===== Member 2: Tickets and waiting list =====
 
@@ -126,14 +126,14 @@ struct Heap {
     size_t capacity;
 };
 
-Heap *heap_create(void);
-bool heap_push(Heap *h, HeapItem item);
-bool heap_pop(Heap *h, HeapItem *out);
-bool heap_peek(const Heap *h, HeapItem *out);
-size_t heap_size(const Heap *h);
-Heap *heap_clone(const Heap *h);
-void heap_clear(Heap *h);
-void heap_destroy(Heap *h);
+Heap *newHeap(void);
+bool heapPush(Heap *h, HeapItem item);
+bool heapPop(Heap *h, HeapItem *out);
+bool heapPeek(const Heap *h, HeapItem *out);
+size_t heapSize(const Heap *h);
+Heap *heapCopy(const Heap *h);
+void heapClear(Heap *h);
+void freeHeap(Heap *h);
 
 struct HmEntry {
     int key;
@@ -143,9 +143,9 @@ struct HmEntry {
 
 struct HashMap {
     HmEntry **buckets;
-    size_t bucket_count;
+    size_t bucketCount;
     size_t size;
-    size_t elem_size;
+    size_t itemSize;
 };
 
 struct HmIter {
@@ -154,16 +154,16 @@ struct HmIter {
     HmEntry *entry;
 };
 
-HashMap *hm_create(size_t elem_size);
-void *hm_put(HashMap *map, int key, const void *value);
-void *hm_get(const HashMap *map, int key);
-bool hm_contains(const HashMap *map, int key);
-bool hm_remove(HashMap *map, int key);
-size_t hm_size(const HashMap *map);
-void hm_iter_init(const HashMap *map, HmIter *it);
-bool hm_iter_next(HmIter *it, int *key_out, void **value_out);
-void hm_clear(HashMap *map);
-void hm_destroy(HashMap *map);
+HashMap *newTable(size_t itemSize);
+void *tablePut(HashMap *map, int key, const void *value);
+void *tableGet(const HashMap *map, int key);
+bool tableHas(const HashMap *map, int key);
+bool tableRemove(HashMap *map, int key);
+size_t tableSize(const HashMap *map);
+void tableIterStart(const HashMap *map, HmIter *it);
+bool tableIterNext(HmIter *it, int *keyOut, void **valueOut);
+void tableClear(HashMap *map);
+void freeTable(HashMap *map);
 
 struct BstNode {
     int key;
@@ -176,15 +176,15 @@ struct Bst {
     size_t size;
 };
 
-Bst *bst_create(void);
-bool bst_insert(Bst *tree, int key);
-bool bst_contains(const Bst *tree, int key);
-bool bst_contains_recursive(const Bst *tree, int key);
-size_t bst_size(const Bst *tree);
-int bst_height(const Bst *tree);
-size_t bst_inorder(const Bst *tree, int *out, size_t max_out);
-size_t bst_range(const Bst *tree, int lo, int hi, int *out, size_t max_out);
-void bst_destroy(Bst *tree);
+Bst *newBst(void);
+bool bstInsert(Bst *tree, int key);
+bool bstContains(const Bst *tree, int key);
+bool bstContainsRecursive(const Bst *tree, int key);
+size_t bstSize(const Bst *tree);
+int bstHeight(const Bst *tree);
+size_t bstInorder(const Bst *tree, int *out, size_t maxOut);
+size_t bstRange(const Bst *tree, int low, int high, int *out, size_t maxOut);
+void freeBst(Bst *tree);
 
 struct AvlNode {
     int key;
@@ -198,14 +198,14 @@ struct Avl {
     size_t size;
 };
 
-Avl *avl_create(void);
-bool avl_insert(Avl *tree, int key);
-bool avl_contains(const Avl *tree, int key);
-size_t avl_size(const Avl *tree);
-int avl_height(const Avl *tree);
-size_t avl_inorder(const Avl *tree, int *out, size_t max_out);
-size_t avl_range(const Avl *tree, int lo, int hi, int *out, size_t max_out);
-void avl_destroy(Avl *tree);
+Avl *newAvl(void);
+bool avlInsert(Avl *tree, int key);
+bool avlContains(const Avl *tree, int key);
+size_t avlSize(const Avl *tree);
+int avlHeight(const Avl *tree);
+size_t avlInorder(const Avl *tree, int *out, size_t maxOut);
+size_t avlRange(const Avl *tree, int low, int high, int *out, size_t maxOut);
+void freeAvl(Avl *tree);
 
 // ===== Member 3: Smart cards and storage =====
 
@@ -218,17 +218,17 @@ struct List {
     ListNode *head;
     ListNode *tail;
     size_t size;
-    size_t elem_size;
+    size_t itemSize;
 };
 
-List *list_create(size_t elem_size);
-bool list_push_front(List *list, const void *item);
-bool list_push_back(List *list, const void *item);
-bool list_pop_front(List *list, void *out);
-void list_trim(List *list, size_t max_size);
-size_t list_size(const List *list);
-void list_clear(List *list);
-void list_destroy(List *list);
+List *newList(size_t itemSize);
+bool listAddFront(List *list, const void *item);
+bool listAddBack(List *list, const void *item);
+bool listRemoveFront(List *list, void *out);
+void listTrim(List *list, size_t maxSize);
+size_t listSize(const List *list);
+void listClear(List *list);
+void freeList(List *list);
 
 struct QueueNode {
     int value;
@@ -241,59 +241,59 @@ struct Queue {
     size_t size;
 };
 
-Queue *queue_create(void);
-bool queue_enqueue(Queue *q, int value);
-bool queue_dequeue(Queue *q, int *out);
-bool queue_peek(const Queue *q, int *out);
-bool queue_is_empty(const Queue *q);
-size_t queue_size(const Queue *q);
-void queue_clear(Queue *q);
-void queue_destroy(Queue *q);
+Queue *newQueue(void);
+bool enqueue(Queue *q, int value);
+bool dequeue(Queue *q, int *out);
+bool queuePeek(const Queue *q, int *out);
+bool queueIsEmpty(const Queue *q);
+size_t queueSize(const Queue *q);
+void queueClear(Queue *q);
+void freeQueue(Queue *q);
 
 struct Stack {
     unsigned char *items;
-    size_t elem_size;
+    size_t itemSize;
     size_t count;
     size_t capacity;
 };
 
-Stack *stack_create(size_t elem_size);
-bool stack_push(Stack *s, const void *item);
-bool stack_pop(Stack *s, void *out);
-bool stack_peek(const Stack *s, void *out);
-const void *stack_get_from_top(const Stack *s, size_t index);
-size_t stack_size(const Stack *s);
-bool stack_is_empty(const Stack *s);
-void stack_clear(Stack *s);
-void stack_destroy(Stack *s);
+Stack *newStack(size_t itemSize);
+bool stackPush(Stack *s, const void *item);
+bool stackPop(Stack *s, void *out);
+bool stackPeek(const Stack *s, void *out);
+const void *stackFromTop(const Stack *s, size_t index);
+size_t stackSize(const Stack *s);
+bool stackIsEmpty(const Stack *s);
+void stackClear(Stack *s);
+void freeStack(Stack *s);
 
 struct Deque {
     unsigned char *items;
-    size_t elem_size;
+    size_t itemSize;
     size_t capacity;
     size_t head;
     size_t count;
 };
 
-Deque *deque_create(size_t elem_size);
-bool deque_push_front(Deque *d, const void *item);
-bool deque_push_back(Deque *d, const void *item);
-bool deque_pop_front(Deque *d, void *out);
-bool deque_pop_back(Deque *d, void *out);
-bool deque_peek_front(const Deque *d, void *out);
-bool deque_peek_back(const Deque *d, void *out);
-const void *deque_get(const Deque *d, size_t index);
-size_t deque_size(const Deque *d);
-bool deque_is_empty(const Deque *d);
-void deque_clear(Deque *d);
-void deque_destroy(Deque *d);
+Deque *newDeque(size_t itemSize);
+bool dequeAddFront(Deque *d, const void *item);
+bool dequeAddBack(Deque *d, const void *item);
+bool dequeRemoveFront(Deque *d, void *out);
+bool dequeRemoveBack(Deque *d, void *out);
+bool dequePeekFront(const Deque *d, void *out);
+bool dequePeekBack(const Deque *d, void *out);
+const void *dequeAt(const Deque *d, size_t index);
+size_t dequeSize(const Deque *d);
+bool dequeIsEmpty(const Deque *d);
+void dequeClear(Deque *d);
+void freeDeque(Deque *d);
 
 // ===== Member 4: Reports and interface =====
 
-bool merge_sort(void *base, size_t count, size_t elem_size,
+bool mergeSort(void *base, size_t count, size_t itemSize,
                 int (*cmp)(const void *a, const void *b));
 
-bool quick_sort(void *base, size_t count, size_t elem_size,
+bool quickSort(void *base, size_t count, size_t itemSize,
                 int (*cmp)(const void *a, const void *b));
 
 struct CircularQueue {
@@ -303,16 +303,16 @@ struct CircularQueue {
     size_t count;
 };
 
-CircularQueue *cq_create(size_t capacity);
-bool cq_enqueue(CircularQueue *q, int value);
-bool cq_dequeue(CircularQueue *q, int *out);
-bool cq_peek(const CircularQueue *q, int *out);
-bool cq_is_full(const CircularQueue *q);
-bool cq_is_empty(const CircularQueue *q);
-size_t cq_size(const CircularQueue *q);
-size_t cq_capacity(const CircularQueue *q);
-void cq_clear(CircularQueue *q);
-void cq_destroy(CircularQueue *q);
+CircularQueue *newCircularQueue(size_t capacity);
+bool cqEnqueue(CircularQueue *q, int value);
+bool cqDequeue(CircularQueue *q, int *out);
+bool cqPeek(const CircularQueue *q, int *out);
+bool cqIsFull(const CircularQueue *q);
+bool cqIsEmpty(const CircularQueue *q);
+size_t cqSize(const CircularQueue *q);
+size_t cqCapacity(const CircularQueue *q);
+void cqClear(CircularQueue *q);
+void freeCircularQueue(CircularQueue *q);
 
 #include <cstddef>
 #include <initializer_list>
@@ -600,19 +600,19 @@ public:
 
 const FarePolicy& farePolicy(int category);
 
-int baseFareForDistance(long long meters);
+int fareForDistance(long long meters);
 
-bool validCategory(int category);
+bool isValidCategory(int category);
 
 template <typename T>
 Array<T> collectValues(const HashMap* map)
 {
     Array<T> out;
     HmIter it;
-    hm_iter_init(map, &it);
+    tableIterStart(map, &it);
     int key = 0;
     void* value = nullptr;
-    while (hm_iter_next(&it, &key, &value)) {
+    while (tableIterNext(&it, &key, &value)) {
         T* record = (T*)value;
         out.push_back(*record);
     }
@@ -623,7 +623,7 @@ template <typename T>
 void sortRecords(Array<T>& items, int (*compare)(const void*, const void*))
 {
     if (items.size() > 1)
-        merge_sort(items.data(), items.size(), sizeof(T), compare);
+        mergeSort(items.data(), items.size(), sizeof(T), compare);
 }
 
 template <typename T>
@@ -640,16 +640,16 @@ int compareById(const void* a, const void* b)
 
 class RouteHolder {
 public:
-    RouteHolder() { route_init(&route); }
-    ~RouteHolder() { route_free(&route); }
+    RouteHolder() { initRoute(&route); }
+    ~RouteHolder() { freeRoute(&route); }
 
     Route route;
 };
 
 class LineList {
 public:
-    LineList() { list = dlist_create(); }
-    ~LineList() { dlist_destroy(list); }
+    LineList() { list = newDList(); }
+    ~LineList() { freeDList(list); }
 
     DList* list;
 };
@@ -746,7 +746,7 @@ public:
     Metro();
     ~Metro();
 
-    void seedDefaultNetwork();
+    void loadDefaultNetwork();
     void finishSetup(const string& note);
 
     int stationCount() const;
@@ -764,8 +764,8 @@ public:
     bool planRoute(int src, int dst, bool fewestStops, RouteHolder& out,
                    string& error) const;
     Array<int> suggestStations(const string& prefix, int maxResults) const;
-    Array<int> stationsCutOffIfClosed(int id) const;
-    bool buildLineList(int line, LineList& out, bool& complete) const;
+    Array<int> cutOffStations(int id) const;
+    bool makeLineList(int line, LineList& out, bool& complete) const;
     bool isLoopLine(int line) const;
     string towardsStation(int line, int from, int to) const;
     int trackDistance(int a, int b, int line) const;
@@ -804,7 +804,7 @@ public:
     int waitlistPosition(int line, int waitId) const;
     Array<WaitEntry> waitlistInOrder(int line) const;
     Array<Ticket> allTickets() const;
-    Array<Ticket> ticketsInRange(int lo, int hi) const;
+    Array<Ticket> ticketsInRange(int low, int high) const;
     Array<Ticket> ticketsByFare() const;
     int ticketIndexHeight() const;
     int ticketAvlHeight() const;
@@ -832,7 +832,7 @@ private:
     Card* cardPtr(int id);
     Ticket* ticketPtr(int id);
     bool validLine(int line) const;
-    bool fareForJourney(int src, int dst, int category, int& fare, int& line,
+    bool journeyFare(int src, int dst, int category, int& fare, int& line,
                         string& error) const;
     int createTicket(const string& name, int category, int studentId, int src,
                      int dst, int line, int fare, int womenCardId);
@@ -920,7 +920,7 @@ class Metro;
 
 enum class SeedStatus { Loaded, FolderMissing, Error };
 
-SeedStatus loadSeedData(Metro& metro, const string& folder, string& error, string& summary);
+SeedStatus loadStartingData(Metro& metro, const string& folder, string& error, string& summary);
 
 struct SimConfig {
     int passengers = 500;
