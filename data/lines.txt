@@ -1,0 +1,9 @@
+# Metro lines
+# Format: line name | train capacity | a train every N minutes
+# (Capacity is small on purpose so the waiting list is easy to demonstrate.)
+Blue   | 6 | 5
+Yellow | 6 | 6
+Red    | 6 | 8
+Green  | 6 | 7
+Pink   | 6 | 6
+Ring   | 6 | 10

@@ -1,0 +1,4 @@
+# Demo smart cards. Card numbers are given in this order, starting at 5001.
+# Format: holder name | regular / student / senior / disabled | student ID (0 if not a student) | starting balance
+Aarav Sharma | regular | 0   | 500
+Priya Negi   | student | 101 | 300

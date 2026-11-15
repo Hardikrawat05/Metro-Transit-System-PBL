@@ -1,0 +1,54 @@
+# Tracks between neighbouring stations
+# Format: station | station | distance in metres | line
+# This is an example network made for the project. Distances are not official figures.
+
+# Blue line: Airport -> River Front (east-west)
+Airport           | City Mall         | 4200 | Blue
+City Mall         | Rajiv Chowk       | 2600 | Blue
+Rajiv Chowk       | ISBT              | 1800 | Blue
+ISBT              | Railway Station   | 1500 | Blue
+Railway Station   | Clock Tower       | 1200 | Blue
+Clock Tower       | Old Market        | 1600 | Blue
+Old Market        | River Front       | 1700 | Blue
+
+# Yellow line: Forest Institute -> Graphic Era (north-south)
+Forest Institute  | DU                | 2100 | Yellow
+DU                | Civil Lines       | 1600 | Yellow
+Civil Lines       | Rajiv Chowk       | 1400 | Yellow
+Rajiv Chowk       | City Park         | 3000 | Yellow
+City Park         | Tech Park         | 2200 | Yellow
+Tech Park         | Graphic Era       | 1900 | Yellow
+
+# Red line: ISBT -> Sports Complex
+ISBT              | Hospital          |  900 | Red
+Hospital          | Exhibition Ground |  800 | Red
+Exhibition Ground | City Park         |  700 | Red
+City Park         | Stadium           | 2500 | Red
+Stadium           | Sports Complex    | 1500 | Red
+
+# Green line: Hill View -> Bus Depot
+Hill View         | University        | 2000 | Green
+University        | Science City      | 2200 | Green
+Science City      | Civil Lines       | 2500 | Green
+Civil Lines       | Secretariat       | 3100 | Green
+Secretariat       | Clock Tower       | 2800 | Green
+Clock Tower       | Bus Depot         | 2300 | Green
+
+# Pink line: Airport -> Botanical Garden
+Airport           | Aerocity          | 2700 | Pink
+Aerocity          | Transport Nagar   | 1900 | Pink
+Transport Nagar   | Industrial Area   | 1600 | Pink
+Industrial Area   | Stadium           | 2100 | Pink
+Stadium           | Tech Park         | 2300 | Pink
+Tech Park         | Botanical Garden  | 2200 | Pink
+
+# Ring line: a loop around the city (the last station connects back to the first)
+City Mall         | Science City      | 3600 | Ring
+Science City      | Secretariat       | 5100 | Ring
+Secretariat       | Mall Road         | 2000 | Ring
+Mall Road         | Old Market        | 2400 | Ring
+Old Market        | Bus Depot         | 2100 | Ring
+Bus Depot         | Botanical Garden  | 5500 | Ring
+Botanical Garden  | Industrial Area   | 6100 | Ring
+Industrial Area   | Lake View         | 2200 | Ring
+Lake View         | City Mall         | 2400 | Ring

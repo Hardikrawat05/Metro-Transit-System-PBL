@@ -1,0 +1,12 @@
+# compiled files (rebuild them from the source code)
+*.o
+*.exe
+metro
+test_ds
+test_metro
+
+# data the program saves while running
+metro_data.txt
+metro_data.txt.tmp
+metro_data.txt.corrupt
+test_data.txt

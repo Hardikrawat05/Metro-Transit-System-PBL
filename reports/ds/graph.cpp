@@ -300,7 +300,7 @@ void freeRoute(Route *r)
     initRoute(r);
 }
 
-static bool makeRoute(int src, int dst, const int *prev, const int *prevLine,
+bool makeRoute(int src, int dst, const int *prev, const int *prevLine,
                         const int *prevDist, Route *out)
 {
     int len = 1;
@@ -335,13 +335,7 @@ static bool makeRoute(int src, int dst, const int *prev, const int *prevLine,
     return true;
 }
 
-struct SearchArrays {
-    int *prev;
-    int *prevLine;
-    int *prevDist;
-};
-
-static bool allocSearch(SearchArrays *search, int n)
+bool allocSearch(SearchArrays *search, int n)
 {
     search->prev = (int *)malloc((size_t)n * sizeof(int));
     search->prevLine = (int *)malloc((size_t)n * sizeof(int));
@@ -356,14 +350,14 @@ static bool allocSearch(SearchArrays *search, int n)
     return true;
 }
 
-static void freeSearch(SearchArrays *search)
+void freeSearch(SearchArrays *search)
 {
     free(search->prev);
     free(search->prevLine);
     free(search->prevDist);
 }
 
-static bool canStart(const Graph *g, int src, int dst, bool allowClosed, Route *out)
+bool canStart(const Graph *g, int src, int dst, bool allowClosed, Route *out)
 {
     if (out == nullptr)
         return false;
@@ -375,124 +369,9 @@ static bool canStart(const Graph *g, int src, int dst, bool allowClosed, Route *
     return true;
 }
 
-static void rememberStep(SearchArrays *search, int from, const EdgeNode *track)
+void rememberStep(SearchArrays *search, int from, const EdgeNode *track)
 {
     search->prev[track->to] = from;
     search->prevLine[track->to] = track->line;
     search->prevDist[track->to] = track->meters;
-}
-
-static bool pushStation(Heap *heap, long long distance, int station)
-{
-    HeapItem item;
-    item.key1 = distance;
-    item.key2 = 0;
-    item.value = station;
-    return heapPush(heap, item);
-}
-
-static bool runDijkstra(const Graph *g, int src, int dst, bool allowClosed, long long *dist,
-                        SearchArrays *search, Heap *heap)
-{
-    HeapItem item;
-
-    for (int i = 0; i < g->stationCount; i++)
-        dist[i] = LLONG_MAX;
-    dist[src] = 0;
-    if (!pushStation(heap, 0, src))
-        return false;
-
-    while (heapPop(heap, &item)) {
-        int u = item.value;
-        if (item.key1 > dist[u])
-            continue;
-        if (u == dst)
-            break;
-
-        for (const EdgeNode *track = g->stations[u].adj; track != nullptr; track = track->next) {
-            int v = track->to;
-            if (!allowClosed && !g->stations[v].open)
-                continue;
-
-            long long newDist = dist[u] + track->meters;
-            if (newDist < dist[v]) {
-                dist[v] = newDist;
-                rememberStep(search, u, track);
-                if (!pushStation(heap, newDist, v))
-                    return false;
-            }
-        }
-    }
-    return true;
-}
-
-bool dijkstraRoute(const Graph *g, int src, int dst, bool allowClosed, Route *out)
-{
-    if (!canStart(g, src, dst, allowClosed, out))
-        return false;
-
-    int n = g->stationCount;
-    long long *dist = (long long *)malloc((size_t)n * sizeof(long long));
-    SearchArrays search = {nullptr, nullptr, nullptr};
-    Heap *heap = newHeap();
-    bool ok = false;
-
-    if (dist != nullptr && heap != nullptr && allocSearch(&search, n) &&
-        runDijkstra(g, src, dst, allowClosed, dist, &search, heap) && dist[dst] != LLONG_MAX)
-        ok = makeRoute(src, dst, search.prev, search.prevLine, search.prevDist, out);
-
-    free(dist);
-    freeSearch(&search);
-    freeHeap(heap);
-    return ok;
-}
-
-static bool runBfs(const Graph *g, int src, int dst, bool allowClosed, bool *visited,
-                   SearchArrays *search, Queue *queue, bool *found)
-{
-    int u;
-
-    visited[src] = true;
-    if (!enqueue(queue, src))
-        return false;
-
-    while (!*found && dequeue(queue, &u)) {
-        for (const EdgeNode *track = g->stations[u].adj; track != nullptr; track = track->next) {
-            int v = track->to;
-            if (visited[v] || (!allowClosed && !g->stations[v].open))
-                continue;
-
-            visited[v] = true;
-            rememberStep(search, u, track);
-            if (v == dst) {
-                *found = true;
-                break;
-            }
-            if (!enqueue(queue, v))
-                return false;
-        }
-    }
-    return true;
-}
-
-bool bfsRoute(const Graph *g, int src, int dst, bool allowClosed, Route *out)
-{
-    if (!canStart(g, src, dst, allowClosed, out))
-        return false;
-
-    int n = g->stationCount;
-    bool *visited = (bool *)calloc((size_t)n, sizeof(bool));
-    SearchArrays search = {nullptr, nullptr, nullptr};
-    Queue *queue = newQueue();
-    bool found = false;
-    bool ok = false;
-
-    if (visited != nullptr && queue != nullptr && allocSearch(&search, n) &&
-        runBfs(g, src, dst, allowClosed, visited, &search, queue, &found) && (src == dst || found))
-        ok = makeRoute(src, dst, search.prev, search.prevLine, search.prevDist, out);
-
-    free(visited);
-    freeSearch(&search);
-    freeQueue(queue);
-    return ok;
 }

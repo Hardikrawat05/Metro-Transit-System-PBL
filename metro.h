@@ -3,7 +3,7 @@
 
 #include <cstddef>
 
-// ===== Member 1: Journey and network =====
+// ===== Member 4: Graph, quick sort, merge sort and circular queue =====
 
 #define GRAPH_NAME_MAX 48
 
@@ -64,13 +64,67 @@ const EdgeNode *graphTracks(const Graph *g, int id);
 
 void initRoute(Route *r);
 void freeRoute(Route *r);
+
+struct SearchArrays {
+    int *prev;
+    int *prevLine;
+    int *prevDist;
+};
+
+bool makeRoute(int src, int dst, const int *prev, const int *prevLine, const int *prevDist, Route *out);
+bool allocSearch(SearchArrays *search, int n);
+void freeSearch(SearchArrays *search);
+bool canStart(const Graph *g, int src, int dst, bool allowClosed, Route *out);
+void rememberStep(SearchArrays *search, int from, const EdgeNode *track);
+
+bool quickSort(void *base, size_t count, size_t itemSize,
+                int (*cmp)(const void *a, const void *b));
+
+bool mergeSort(void *base, size_t count, size_t itemSize,
+                int (*cmp)(const void *a, const void *b));
+
+struct CircularQueue {
+    int *items;
+    size_t capacity;
+    size_t front;
+    size_t count;
+};
+
+CircularQueue *newCircularQueue(size_t capacity);
+bool cqEnqueue(CircularQueue *q, int value);
+bool cqDequeue(CircularQueue *q, int *out);
+bool cqPeek(const CircularQueue *q, int *out);
+bool cqIsFull(const CircularQueue *q);
+bool cqIsEmpty(const CircularQueue *q);
+size_t cqSize(const CircularQueue *q);
+size_t cqCapacity(const CircularQueue *q);
+void cqClear(CircularQueue *q);
+void freeCircularQueue(CircularQueue *q);
+
+// ===== Member 1: Dijkstra, heap, binary search, deque and doubly linked list =====
+
 bool dijkstraRoute(const Graph *g, int src, int dst, bool allowClosed, Route *out);
-bool bfsRoute(const Graph *g, int src, int dst, bool allowClosed, Route *out);
 
-int dfsCountRecursive(const Graph *g, int start, int blocked, bool *visited);
-int dfsCountLoop(const Graph *g, int start, int blocked, bool *visited);
+struct HeapItem {
+    long long key1;
+    long long key2;
+    int value;
+};
 
-int dfsGroups(const Graph *g, int blocked, int *groupOf);
+struct Heap {
+    HeapItem *items;
+    size_t count;
+    size_t capacity;
+};
+
+Heap *newHeap(void);
+bool heapPush(Heap *h, HeapItem item);
+bool heapPop(Heap *h, HeapItem *out);
+bool heapPeek(const Heap *h, HeapItem *out);
+size_t heapSize(const Heap *h);
+Heap *heapCopy(const Heap *h);
+void heapClear(Heap *h);
+void freeHeap(Heap *h);
 
 struct StationIndexEntry {
     char key[GRAPH_NAME_MAX];
@@ -89,6 +143,27 @@ int findInIndexRecursive(const StationIndex *index, const char *name);
 int findByPrefix(const StationIndex *index, const char *prefix, int *outIds,
                          int maxOut);
 void freeStationIndex(StationIndex *index);
+
+struct Deque {
+    unsigned char *items;
+    size_t itemSize;
+    size_t capacity;
+    size_t head;
+    size_t count;
+};
+
+Deque *newDeque(size_t itemSize);
+bool dequeAddFront(Deque *d, const void *item);
+bool dequeAddBack(Deque *d, const void *item);
+bool dequeRemoveFront(Deque *d, void *out);
+bool dequeRemoveBack(Deque *d, void *out);
+bool dequePeekFront(const Deque *d, void *out);
+bool dequePeekBack(const Deque *d, void *out);
+const void *dequeAt(const Deque *d, size_t index);
+size_t dequeSize(const Deque *d);
+bool dequeIsEmpty(const Deque *d);
+void dequeClear(Deque *d);
+void freeDeque(Deque *d);
 
 struct DNode {
     int value;
@@ -112,28 +187,78 @@ size_t dlistSize(const DList *list);
 void dlistClear(DList *list);
 void freeDList(DList *list);
 
-// ===== Member 2: Tickets and waiting list =====
+// ===== Member 2: BFS, AVL tree, BST and queue =====
 
-struct HeapItem {
-    long long key1;
-    long long key2;
+bool bfsRoute(const Graph *g, int src, int dst, bool allowClosed, Route *out);
+
+struct AvlNode {
+    int key;
+    int height;
+    struct AvlNode *left;
+    struct AvlNode *right;
+};
+
+struct Avl {
+    AvlNode *root;
+    size_t size;
+};
+
+Avl *newAvl(void);
+bool avlInsert(Avl *tree, int key);
+bool avlContains(const Avl *tree, int key);
+size_t avlSize(const Avl *tree);
+int avlHeight(const Avl *tree);
+size_t avlInorder(const Avl *tree, int *out, size_t maxOut);
+size_t avlRange(const Avl *tree, int low, int high, int *out, size_t maxOut);
+void freeAvl(Avl *tree);
+
+struct BstNode {
+    int key;
+    struct BstNode *left;
+    struct BstNode *right;
+};
+
+struct Bst {
+    BstNode *root;
+    size_t size;
+};
+
+Bst *newBst(void);
+bool bstInsert(Bst *tree, int key);
+bool bstContains(const Bst *tree, int key);
+bool bstContainsRecursive(const Bst *tree, int key);
+size_t bstSize(const Bst *tree);
+int bstHeight(const Bst *tree);
+size_t bstInorder(const Bst *tree, int *out, size_t maxOut);
+size_t bstRange(const Bst *tree, int low, int high, int *out, size_t maxOut);
+void freeBst(Bst *tree);
+
+struct QueueNode {
     int value;
+    struct QueueNode *next;
 };
 
-struct Heap {
-    HeapItem *items;
-    size_t count;
-    size_t capacity;
+struct Queue {
+    QueueNode *front;
+    QueueNode *rear;
+    size_t size;
 };
 
-Heap *newHeap(void);
-bool heapPush(Heap *h, HeapItem item);
-bool heapPop(Heap *h, HeapItem *out);
-bool heapPeek(const Heap *h, HeapItem *out);
-size_t heapSize(const Heap *h);
-Heap *heapCopy(const Heap *h);
-void heapClear(Heap *h);
-void freeHeap(Heap *h);
+Queue *newQueue(void);
+bool enqueue(Queue *q, int value);
+bool dequeue(Queue *q, int *out);
+bool queuePeek(const Queue *q, int *out);
+bool queueIsEmpty(const Queue *q);
+size_t queueSize(const Queue *q);
+void queueClear(Queue *q);
+void freeQueue(Queue *q);
+
+// ===== Member 3: DFS, hash table, stack and linked list =====
+
+int dfsCountRecursive(const Graph *g, int start, int blocked, bool *visited);
+int dfsCountLoop(const Graph *g, int start, int blocked, bool *visited);
+
+int dfsGroups(const Graph *g, int blocked, int *groupOf);
 
 struct HmEntry {
     int key;
@@ -165,49 +290,22 @@ bool tableIterNext(HmIter *it, int *keyOut, void **valueOut);
 void tableClear(HashMap *map);
 void freeTable(HashMap *map);
 
-struct BstNode {
-    int key;
-    struct BstNode *left;
-    struct BstNode *right;
+struct Stack {
+    unsigned char *items;
+    size_t itemSize;
+    size_t count;
+    size_t capacity;
 };
 
-struct Bst {
-    BstNode *root;
-    size_t size;
-};
-
-Bst *newBst(void);
-bool bstInsert(Bst *tree, int key);
-bool bstContains(const Bst *tree, int key);
-bool bstContainsRecursive(const Bst *tree, int key);
-size_t bstSize(const Bst *tree);
-int bstHeight(const Bst *tree);
-size_t bstInorder(const Bst *tree, int *out, size_t maxOut);
-size_t bstRange(const Bst *tree, int low, int high, int *out, size_t maxOut);
-void freeBst(Bst *tree);
-
-struct AvlNode {
-    int key;
-    int height;
-    struct AvlNode *left;
-    struct AvlNode *right;
-};
-
-struct Avl {
-    AvlNode *root;
-    size_t size;
-};
-
-Avl *newAvl(void);
-bool avlInsert(Avl *tree, int key);
-bool avlContains(const Avl *tree, int key);
-size_t avlSize(const Avl *tree);
-int avlHeight(const Avl *tree);
-size_t avlInorder(const Avl *tree, int *out, size_t maxOut);
-size_t avlRange(const Avl *tree, int low, int high, int *out, size_t maxOut);
-void freeAvl(Avl *tree);
-
-// ===== Member 3: Smart cards and storage =====
+Stack *newStack(size_t itemSize);
+bool stackPush(Stack *s, const void *item);
+bool stackPop(Stack *s, void *out);
+bool stackPeek(const Stack *s, void *out);
+const void *stackFromTop(const Stack *s, size_t index);
+size_t stackSize(const Stack *s);
+bool stackIsEmpty(const Stack *s);
+void stackClear(Stack *s);
+void freeStack(Stack *s);
 
 struct ListNode {
     void *data;
@@ -229,90 +327,6 @@ void listTrim(List *list, size_t maxSize);
 size_t listSize(const List *list);
 void listClear(List *list);
 void freeList(List *list);
-
-struct QueueNode {
-    int value;
-    struct QueueNode *next;
-};
-
-struct Queue {
-    QueueNode *front;
-    QueueNode *rear;
-    size_t size;
-};
-
-Queue *newQueue(void);
-bool enqueue(Queue *q, int value);
-bool dequeue(Queue *q, int *out);
-bool queuePeek(const Queue *q, int *out);
-bool queueIsEmpty(const Queue *q);
-size_t queueSize(const Queue *q);
-void queueClear(Queue *q);
-void freeQueue(Queue *q);
-
-struct Stack {
-    unsigned char *items;
-    size_t itemSize;
-    size_t count;
-    size_t capacity;
-};
-
-Stack *newStack(size_t itemSize);
-bool stackPush(Stack *s, const void *item);
-bool stackPop(Stack *s, void *out);
-bool stackPeek(const Stack *s, void *out);
-const void *stackFromTop(const Stack *s, size_t index);
-size_t stackSize(const Stack *s);
-bool stackIsEmpty(const Stack *s);
-void stackClear(Stack *s);
-void freeStack(Stack *s);
-
-struct Deque {
-    unsigned char *items;
-    size_t itemSize;
-    size_t capacity;
-    size_t head;
-    size_t count;
-};
-
-Deque *newDeque(size_t itemSize);
-bool dequeAddFront(Deque *d, const void *item);
-bool dequeAddBack(Deque *d, const void *item);
-bool dequeRemoveFront(Deque *d, void *out);
-bool dequeRemoveBack(Deque *d, void *out);
-bool dequePeekFront(const Deque *d, void *out);
-bool dequePeekBack(const Deque *d, void *out);
-const void *dequeAt(const Deque *d, size_t index);
-size_t dequeSize(const Deque *d);
-bool dequeIsEmpty(const Deque *d);
-void dequeClear(Deque *d);
-void freeDeque(Deque *d);
-
-// ===== Member 4: Reports and interface =====
-
-bool mergeSort(void *base, size_t count, size_t itemSize,
-                int (*cmp)(const void *a, const void *b));
-
-bool quickSort(void *base, size_t count, size_t itemSize,
-                int (*cmp)(const void *a, const void *b));
-
-struct CircularQueue {
-    int *items;
-    size_t capacity;
-    size_t front;
-    size_t count;
-};
-
-CircularQueue *newCircularQueue(size_t capacity);
-bool cqEnqueue(CircularQueue *q, int value);
-bool cqDequeue(CircularQueue *q, int *out);
-bool cqPeek(const CircularQueue *q, int *out);
-bool cqIsFull(const CircularQueue *q);
-bool cqIsEmpty(const CircularQueue *q);
-size_t cqSize(const CircularQueue *q);
-size_t cqCapacity(const CircularQueue *q);
-void cqClear(CircularQueue *q);
-void freeCircularQueue(CircularQueue *q);
 
 #include <cstddef>
 #include <initializer_list>
@@ -968,22 +982,9 @@ struct InputClosed : runtime_error {
     InputClosed() : runtime_error("input closed") {}
 };
 
-const char* const RED = "31";
-const char* const GREEN = "32";
-const char* const YELLOW = "33";
-const char* const BLUE = "34";
-const char* const MAGENTA = "35";
-const char* const CYAN = "36";
-const char* const BOLD = "1";
-const char* const DIM = "2";
 
-void init(bool wantColors, bool wantUnicode = true);
-bool unicode();
-bool interactive();
 
-string paint(const string& text, const char* code);
 void clearScreen();
-void pause();
 
 void title(const string& text);
 void success(const string& text);
@@ -992,12 +993,10 @@ void warn(const string& text);
 void info(const string& text);
 
 string trim(const string& s);
-size_t displayWidth(const string& text);
 bool parseInt(const string& text, int& out);
 string readLine(const string& prompt);
 int readInt(const string& prompt, int minValue, int maxValue);
 string readText(const string& prompt, size_t maxLen);
-string readPassword(const string& prompt);
 bool confirm(const string& question);
 
 class Table {

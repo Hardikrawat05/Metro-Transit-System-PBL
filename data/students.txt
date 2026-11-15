@@ -1,0 +1,7 @@
+# Registered student IDs (students get 50% off with these)
+# One ID per line. Add your own below.
+101
+102
+105
+110
+115

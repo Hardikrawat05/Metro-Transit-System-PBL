@@ -1,0 +1,6 @@
+# Verified women's card numbers (give priority on the waiting list).
+# In real life staff verify the card holder when the card is issued.
+# One number per line. Add your own below.
+9001
+9002
+9003
