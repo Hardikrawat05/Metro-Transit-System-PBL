@@ -1,18 +1,14 @@
 #include "metro.h"
-
 #include <iomanip>
 #include <iostream>
 #include <cstdio>
-
 using namespace std;
-
 static string km(long long meters)
 {
     char text[32];
     snprintf(text, sizeof(text), "%.1f km", meters / 1000.0);
     return text;
 }
-
 static string categoryShort(int c)
 {
     switch (c) {
@@ -42,14 +38,12 @@ static string ticketStatusName(int s)
         return "?";
     }
 }
-
 static string oneDecimal(double v)
 {
     char text[32];
     snprintf(text, sizeof(text), "%.1f", v);
     return text;
 }
-
 App::App(Metro& metro, string dataPath) : m_(metro), dataPath_(dataPath) {}
 
 int App::menu(const string& heading, const Array<string>& options)
