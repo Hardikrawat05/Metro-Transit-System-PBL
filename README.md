@@ -1,8 +1,7 @@
 # Metro Transit System — Journey & Network Module (`journey/`)
 
 **Author:** Aaryan Rawat (`Aaryan-Rawat28`)  
-**Branch:** `aaryan`  
-**Language:** C++17 (Zero STL containers, standard library I/O only)
+**Branch:** `aaryan`
 
 This branch contains the **Journey and Network** subsystem of the Metro Transit System. It handles everything needed to model stations and metro lines, load the starting network from text files, search stations by name or prefix, find the shortest route between stations, calculate distance-based fares with passenger discounts, and maintain a recent activity log.
 
