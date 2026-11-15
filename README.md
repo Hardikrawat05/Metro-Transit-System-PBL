@@ -6,7 +6,7 @@
 ![Data Structures](https://img.shields.io/badge/Data%20Structures%20%26%20Algos-17%20Custom-blue?style=flat-square)
 ![Tests](https://img.shields.io/badge/Automated%20Checks-13%2C669%20Passing-success?style=flat-square)
 
-A modular, terminal-based **Metro Transit Management System** built in **C++17** as a Project-Based Learning (PBL) engineering project at Graphic Era. Passengers can plan multi-line journeys, book tickets with priority waitlisting, and travel using smart cards or passes; administrators can manage the transit network, trains, student/women's card registries, analytics reports, and rush-hour simulations.
+A modular, terminal-based **Metro Transit Management System** built in **C++17**. Passengers can plan multi-line journeys, book tickets with priority waitlisting, and travel using smart cards or passes; administrators can manage the transit network, trains, student/women's card registries, analytics reports, and rush-hour simulations.
 
 - **Zero STL containers:** Built with a custom template `Array<T>` and **17 hand-implemented data structures and algorithms**—no `std::vector`, `std::map`, or external libraries.
 - **Pure C++17 CLI:** Standard `cin`/`cout` terminal interface with no GUI dependencies, no color escape assumptions, and deterministic behavior.
@@ -425,11 +425,11 @@ g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_metro.cpp $src -o test_metro && ./
 
 ## Team & Contributors
 
-Developed by a team of four at **Graphic Era** as a Project-Based Learning (PBL) initiative. Each member owns two advanced data structures/algorithms, supporting medium/basic structures, and the corresponding feature classes (~560–650 lines per member), integrated through `metro.h`.
+Built by a team of four, with each member owning a dedicated module (`journey/`, `tickets/`, `cards/`, `reports/`), its underlying data structures and algorithms, and its feature classes connected through `metro.h`.
 
-| Member | Assigned Folder | Core Data Structures & Algorithms | Owned Features (`classes/`) |
+| Member | Module | Role & Responsibilities | Data Structures & Algorithms |
 | :--- | :--- | :--- | :--- |
-| **Member 1** _(Team Lead)_ | `journey/` | Dijkstra, Min-Heap, Binary Search, Deque, Doubly Linked List | `FarePolicy` polymorphism, seed loader, stations, lines, routing, closure check |
-| **Member 2** | `tickets/` | BFS, AVL Tree, BST, Queue | Ticket booking/cancellation/expiry, priority waiting list, student/women registries, trains |
-| **Member 3** | `cards/` | DFS, Hash Table, Stack, Singly Linked List | Smart cards, tap-in/out, passes, lost cards, admin login/undo, atomic storage, clock |
-| **Member 4** | `reports/` | Graph (Adjacency List), Quick Sort, Merge Sort, Circular Queue | Analytics reports, rush-hour simulation, UI/table formatter, menus, `main()`, test suites |
+| **Member 1** | `journey/` | Journey planning, fare policies, seed loading, stations, lines, closure checks | Dijkstra, Min-Heap, Binary Search, Deque, Doubly Linked List |
+| **Member 2** | `tickets/` | Ticket booking, cancellation, expiry, priority waiting list, student/women registries, trains | BFS, AVL Tree, BST, Queue |
+| **Member 3** | `cards/` | Smart cards, tap-in/out, passes, lost cards, admin login/undo, persistence, clock | DFS, Hash Table, Stack, Singly Linked List |
+| **Member 4** | `reports/` | Analytics reports, rush-hour simulation, UI/table formatting, menus, `main()`, test suites | Graph (Adjacency List), Quick Sort, Merge Sort, Circular Queue |
