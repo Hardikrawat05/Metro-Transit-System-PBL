@@ -462,13 +462,6 @@ g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_metro.cpp $src -o test_metro
 .\test_metro.exe
 ```
 
-**Linux / macOS:**
-```bash
-src=$(find journey tickets cards reports -name "*.cpp")
-g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_ds.cpp $src -o test_ds && ./test_ds
-g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_metro.cpp $src -o test_metro && ./test_metro
-```
-
 - **`tests/test_ds.cpp` (12,370 checks):** Covers two-key heap tie-breaking, 10,000+ hash table insertions with dynamic rehashing, merge/quick sort stability & edge cases, Dijkstra vs. BFS correctness, recursive & iterative DFS, 5,000-node degenerate BST chain vs. all four AVL rotations, circular-queue wrap-around, deque, doubly linked list, and binary search.
 - **`tests/test_metro.cpp` (1,299 checks):** Covers fare policies, routing, waitlist promotion & lazy leave, ticket expiry, smart cards, passes, overstay penalties, lost-card transfers, admin undo, login lockout, atomic save/load, corrupt-file recovery, reports, simulation, BST vs. AVL heights at 1,000 tickets, and seed-file error diagnostics.
 - Verified with **AddressSanitizer** and **UndefinedBehaviorSanitizer** with zero memory leaks or undefined behavior.
