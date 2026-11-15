@@ -34,7 +34,6 @@ A modular, terminal-based **Metro Transit Management System** built in **C++17**
 - [Starting Data & Network Topology](#starting-data--network-topology)
 - [End-to-End Demo Walkthrough](#end-to-end-demo-walkthrough)
 - [Testing & Quality Assurance](#testing--quality-assurance)
-- [Assumptions, Trade-offs & Limitations](#assumptions-trade-offs--limitations)
 - [Team & Contributors](#team--contributors)
 
 ---
@@ -408,18 +407,6 @@ g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_metro.cpp $src -o test_metro && ./
 - **`tests/test_ds.cpp` (12,370 checks):** Covers two-key heap tie-breaking, 10,000+ hash table insertions with dynamic rehashing, merge/quick sort stability & edge cases, Dijkstra vs. BFS correctness, recursive & iterative DFS, 5,000-node degenerate BST chain vs. all four AVL rotations, circular-queue wrap-around, deque, doubly linked list, and binary search.
 - **`tests/test_metro.cpp` (1,299 checks):** Covers fare policies, routing, waitlist promotion & lazy leave, ticket expiry, smart cards, passes, overstay penalties, lost-card transfers, admin undo, login lockout, atomic save/load, corrupt-file recovery, reports, simulation, BST vs. AVL heights at 1,000 tickets, and seed-file error diagnostics.
 - Verified with **AddressSanitizer** and **UndefinedBehaviorSanitizer** with zero memory leaks or undefined behavior.
-
----
-
-## Assumptions, Trade-offs & Limitations
-
-- **Illustrative Network & Fares:** Station distances and fare slabs are project-defined values rather than official municipal metro tariffs; smart-card trips always price via shortest track distance.
-- **Single-Train Seat Reservation:** A paper ticket reserves a seat on the active train of its route's primary line.
-- **Schedule Model:** Train ETAs are computed from operating hours (`06:00–23:00`) and line frequency rather than live GPS telemetry.
-- **Simulation Arrivals:** Passenger arrivals follow a seeded triangular distribution peaking mid-rush for reproducible benchmarking.
-- **Authentication & Input:** Admin passwords use salted `djb2` hashing (sufficient for an offline academic prototype, not cryptographic production security) and are read from standard input in plain view.
-- **Session-Scoped Undo:** The admin undo stack persists for the active session only and is cleared on restart.
-- **Single-Writer Persistence:** Only one program instance should operate on a given `metro_data.txt` file at a time.
 
 ---
 
