@@ -36,6 +36,28 @@ int Metro::createTicket(const string& name, int category, int studentId, int src
     return t.id;
 }
 
+static const int RESERVED_SEATS = 2;
+static const int RESERVE_FROM_CAPACITY = 4;
+
+static bool hasPriority(int level)
+{
+    return level <= PRIORITY_WOMEN;
+}
+
+static bool onlyReservedLeft(const LineState& ls)
+{
+    return ls.capacity >= RESERVE_FROM_CAPACITY && ls.capacity - ls.booked <= RESERVED_SEATS;
+}
+
+static bool canTakeSeat(const LineState& ls, int level)
+{
+    if (ls.booked >= ls.capacity)
+        return false;
+    if (onlyReservedLeft(ls))
+        return hasPriority(level);
+    return true;
+}
+
 BookingResult Metro::bookTicket(const string& name, int category, int studentId,
                                 int src, int dst, int womenCardId)
 {
@@ -72,11 +94,13 @@ BookingResult Metro::bookTicket(const string& name, int category, int studentId,
         studentId = 0;
 
     LineState& ls = lines_[line];
-    if (ls.booked < ls.capacity) {
+    int level = waitPriority(category, womenCardId);
+    if (canTakeSeat(ls, level)) {
+        bool reserved = onlyReservedLeft(ls);
         r.ok = true;
         r.fare = fare;
         r.ticketId = createTicket(clean, category, studentId, src, dst, line, fare, womenCardId);
-        r.message = "Ticket confirmed.";
+        r.message = reserved ? "Ticket confirmed (reserved seat)." : "Ticket confirmed.";
         log("Ticket " + to_string(r.ticketId) + " booked for " + clean);
         return r;
     }
@@ -96,7 +120,7 @@ BookingResult Metro::bookTicket(const string& name, int category, int studentId,
     tablePut(waitEntries_, w.id, &w);
 
     HeapItem item;
-    item.key1 = waitPriority(category, womenCardId);
+    item.key1 = level;
     item.key2 = w.seq;
     item.value = w.id;
     heapPush(waitlists_[line], item);
@@ -106,7 +130,12 @@ BookingResult Metro::bookTicket(const string& name, int category, int studentId,
     r.waitId = w.id;
     r.fare = fare;
     r.position = waitlistPosition(line, w.id);
-    r.message = "Train on " + lineName(line) + " Line is full. Added to waiting list.";
+    if (ls.booked < ls.capacity)
+        r.message = "Only reserved seats are left on the " + lineName(line) +
+                    " Line train (for senior citizens, persons with disability and women "
+                    "with a verified card). Added to waiting list.";
+    else
+        r.message = "Train on " + lineName(line) + " Line is full. Added to waiting list.";
     log("Waitlist #" + to_string(w.id) + " created for " + clean);
     return r;
 }
@@ -119,6 +148,10 @@ void Metro::processWaitlist(int line, Array<string>* notes)
         WaitEntry* w = (WaitEntry*)(tableGet(waitEntries_, item.value));
         if (w == nullptr || !w->active)
             continue;
+        if (!canTakeSeat(ls, (int)item.key1)) {
+            heapPush(waitlists_[line], item);
+            break;
+        }
 
         int fare = 0, routeLine = 0;
         string error;
