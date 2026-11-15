@@ -18,9 +18,10 @@ A modular, terminal-based **Metro Transit Management System** built in **C++17**
 
 - [Key Capabilities](#key-capabilities)
 - [System & Graph Architecture](#system--graph-architecture)
-  - [Layered System Architecture](#1-layered-system-architecture)
-  - [Graph & Routing Engine](#2-graph--routing-engine)
-  - [Ticketing, Waitlist & Smart Card Flows](#3-ticketing-waitlist--smart-card-flows)
+  - [Full System Architecture Overview](#1-full-system-architecture-overview)
+  - [Layered System Architecture](#2-layered-system-architecture)
+  - [Graph & Routing Engine](#3-graph--routing-engine)
+  - [Ticketing, Waitlist & Smart Card Flows](#4-ticketing-waitlist--smart-card-flows)
 - [Project Structure](#project-structure)
 - [Data Structures & Algorithms](#data-structures--algorithms)
 - [Time Complexity Matrix](#time-complexity-matrix)
@@ -54,7 +55,71 @@ A modular, terminal-based **Metro Transit Management System** built in **C++17**
 
 ## System & Graph Architecture
 
-### 1. Layered System Architecture
+### 1. Full System Architecture Overview
+
+Interactive end-to-end architecture mapping the CLI interface (`App`), central `Metro` controller, OOP domain records, 17 custom DSA structures, business logic subsystems, and `fstream` persistence (`solid arrows = control flow / function calls`, `dashed arrows = data persistence`):
+
+```mermaid
+flowchart TB
+    subgraph TOP["Interaction & Control Layer"]
+        direction LR
+        User["USER"] --> CLI["TERMINAL / CLI INTERFACE (App Class) - Menu-driven cin/getline & Table Output"]
+        CLI <--> Controller["METRO CONTROLLER (Metro Class) - Coordinates operations, validates rules & manages data flow"]
+        Controller <--> UseCases["MAIN INTERFACES / USE CASES - Plan Journey, Book/Cancel/Board Ticket, Card Tap-In/Out, Admin Undo, Reports & Sim"]
+    end
+
+    Controller --> OOP_CORE
+    Controller --> DSA_CORE
+    Controller --> BIZ_CORE
+
+    subgraph MID["Core Architecture Layers"]
+        direction LR
+        subgraph OOP_CORE["OOP CORE CLASSES & RECORDS"]
+            direction TB
+            C1["FarePolicy Hierarchy - RegularFare, StudentFare, SeniorFare, DisabledFare"]
+            C2["Array Template - Custom dynamic array replacing std::vector"]
+            C3["Domain Records - Card, Ticket, WaitEntry, Trip, LineState"]
+            C4["RAII & Utilities - RouteHolder, LineList, Clock, Storage"]
+        end
+
+        subgraph DSA_CORE["DSA STRUCTURES (17 Custom Implementations)"]
+            direction TB
+            D1["Graph Adj List & Dijkstra/BFS - Shortest path O((V+E)log V) & Fewest stops O(V+E)"]
+            D2["DFS (Recursive & Iterative) - Station closure cut-off check O(V+E)"]
+            D3["Hash Table (Chaining) - Cards, tickets & registries O(1) avg"]
+            D4["Min-Heap (2-Key) - Dijkstra & priority waitlist O(log n)"]
+            D5["AVL Tree & BST - Ticket ID index & range queries O(log n)"]
+            D6["Binary Search - Station exact & prefix lookup O(log V)"]
+            D7["Stack & Deque - Admin undo O(1) & 200-item activity log O(1)"]
+            D8["Queue & Circular Queue - Sim gate O(1) & fixed platform O(1)"]
+            D9["Singly & Doubly Linked List - Card trip history & bidirectional line walk"]
+            D10["Merge Sort & Quick Sort - Busiest reports & fare sorting O(n log n)"]
+        end
+
+        subgraph BIZ_CORE["BUSINESS LOGIC MODULES"]
+            direction TB
+            B1["Journey & Network (journey/classes/) - Routing, fares, closure safety, seed loader"]
+            B2["Tickets & Trains (tickets/classes/) - Booking, waitlist promotion, expiry, dispatch"]
+            B3["Smart Cards & Undo (cards/classes/) - Tap-in/out, passes, lost-card transfer, admin undo"]
+            B4["Reports & Simulation (reports/classes/) - Analytics, rush-hour sim, menus & UI"]
+        end
+
+        OOP_CORE <--> DSA_CORE
+        DSA_CORE <--> BIZ_CORE
+    end
+
+    OOP_CORE -.-> Storage
+    DSA_CORE -.-> Storage
+    BIZ_CORE -.-> Storage
+
+    subgraph BOT["Workflow & Persistence Layer"]
+        direction LR
+        Workflow["SYSTEM WORKFLOW (Example: Book Ticket) - 1. Read src/dst & category -> 2. FarePolicy & Dijkstra/BFS -> 3. Check line capacity -> 4. HashMap+BST+AVL or Min-Heap Waitlist -> 5. Deque log -> 6. Atomic fstream save"]
+        Storage["FILE STORAGE (Persistent Data via fstream) - Seed: data/lines.txt, stations.txt, connections.txt, students.txt, women_cards.txt, cards.txt -> Live State: metro_data.txt (.tmp atomic write)"]
+    end
+```
+
+### 2. Layered System Architecture
 
 The codebase enforces a strict separation between **presentation (`App`)**, **domain rules (`Metro`)**, **data structures (`*/ds/`)**, and **persistence (`Storage` / `seed_loader`)**. `Metro` never performs console I/O, enabling deterministic unit testing across all business rules.
 
@@ -83,7 +148,7 @@ flowchart TD
     Domain -->|"Dirty flag -> temp file rename"| Persist["Storage::save (Atomic Write)"]
 ```
 
-### 2. Graph & Routing Engine
+### 3. Graph & Routing Engine
 
 The transit network is modeled as an undirected, weighted multi-graph (`Graph` in `reports/ds/graph.cpp`), where stations are indexed vertices (`Station`) and track segments are adjacency-list edges (`EdgeNode`) carrying both physical distance (`meters`) and `line` ID. Every graph algorithm operates directly on this shared structure:
 
@@ -111,7 +176,7 @@ flowchart LR
     DList -->|"Bidirectional traversal"| LineView["Line View & Towards Direction"]
 ```
 
-### 3. Ticketing, Waitlist & Smart Card Flows
+### 4. Ticketing, Waitlist & Smart Card Flows
 
 ```mermaid
 flowchart TD
