@@ -1,0 +1,31 @@
+# Stations: one name per line. Their IDs are given in this order, starting at 0.
+# The first 14 are the original network; the rest were added for the bigger network.
+Airport
+City Mall
+Rajiv Chowk
+ISBT
+Railway Station
+Clock Tower
+DU
+Civil Lines
+City Park
+Tech Park
+Graphic Era
+Hospital
+Exhibition Ground
+Stadium
+Old Market
+River Front
+Forest Institute
+Hill View
+University
+Science City
+Secretariat
+Bus Depot
+Aerocity
+Transport Nagar
+Industrial Area
+Botanical Garden
+Sports Complex
+Mall Road
+Lake View
