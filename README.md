@@ -147,7 +147,7 @@ Every member owns a subsystem folder split cleanly into **`ds/`** (one file per 
 ```text
 Metro-Transit-System-PBL/
 ├── metro.h                             # Shared contract: Graph, 17 DS APIs, Array<T>, FarePolicy, Metro, App
-├── journey/                            # Member 1: Journey & Network
+├── journey/                            # Aaryan Rawat: Journey & Network
 │   ├── ds/
 │   │   ├── dijkstra.cpp                # Shortest-distance route (weighted graph)
 │   │   ├── heap_priority_queue.cpp     # Two-key binary min-heap (Dijkstra & waitlist)
@@ -158,7 +158,7 @@ Metro-Transit-System-PBL/
 │       ├── fare_policy.cpp             # FarePolicy hierarchy & distance slabs
 │       ├── metro_network.cpp           # Metro lifecycle, network queries, route planning
 │       └── seed_loader.cpp             # Parser & validator for data/*.txt
-├── tickets/                            # Member 2: Ticketing & Trains
+├── tickets/                            # Hardik Rawat: Ticketing & Trains
 │   ├── ds/
 │   │   ├── bfs.cpp                     # Fewest-stops route (unweighted BFS)
 │   │   ├── avl_tree.cpp                # Self-balancing AVL ticket ID index & range queries
@@ -168,7 +168,7 @@ Metro-Transit-System-PBL/
 │       ├── ticket_booking.cpp          # Booking, cancellation, expiry, boarding, waitlist
 │       ├── students_women_cards.cpp    # Student & women's card registries, priority tiers
 │       └── trains.cpp                  # Line train dispatch, capacity, next-train timetable
-├── cards/                              # Member 3: Smart Cards & Persistence
+├── cards/                              # Alok Singh: Smart Cards & Persistence
 │   ├── ds/
 │   │   ├── dfs.cpp                     # Recursive & iterative DFS connectivity analysis
 │   │   ├── hash_table.cpp              # Chaining hash table with dynamic resizing
@@ -179,7 +179,7 @@ Metro-Transit-System-PBL/
 │       ├── admin_undo.cpp              # Salted djb2 auth, lockout, undo stack, activity log
 │       ├── storage.cpp                 # Atomic save/load serialization (metro_data.txt)
 │       └── clock.cpp                   # Shared simulated clock
-├── reports/                            # Member 4: Graph, Reports, Simulation & UI
+├── reports/                            # Saloni Bisht: Graph, Reports, Simulation & UI
 │   ├── ds/
 │   │   ├── graph.cpp                   # Weighted multi-line adjacency-list graph & route helpers
 │   │   ├── quick_sort.cpp              # Median-of-three quick sort (tickets by fare)
@@ -415,9 +415,9 @@ g++ -std=c++17 -I. -DMETRO_NO_MAIN tests/test_metro.cpp $src -o test_metro
 
 Built by a team of four, with each member owning a dedicated module (`journey/`, `tickets/`, `cards/`, `reports/`), its underlying data structures and algorithms, and its feature classes connected through `metro.h`.
 
-| Member | Module | Role & Responsibilities | Data Structures & Algorithms |
-| :--- | :--- | :--- | :--- |
-| **Member 1** | `journey/` | Journey planning, fare policies, seed loading, stations, lines, closure checks | Dijkstra, Min-Heap, Binary Search, Deque, Doubly Linked List |
-| **Member 2** | `tickets/` | Ticket booking, cancellation, expiry, priority waiting list, student/women registries, trains | BFS, AVL Tree, BST, Queue |
-| **Member 3** | `cards/` | Smart cards, tap-in/out, passes, lost cards, admin login/undo, persistence, clock | DFS, Hash Table, Stack, Singly Linked List |
-| **Member 4** | `reports/` | Analytics reports, rush-hour simulation, UI/table formatting, menus, `main()`, test suites | Graph (Adjacency List), Quick Sort, Merge Sort, Circular Queue |
+| Member | Module | Role & Responsibilities | OOP Role | Data Structures & Algorithms |
+| :--- | :--- | :--- | :--- | :--- |
+| **Aaryan Rawat** | `journey/` | Journey planning, fare policies, seed loading, stations, lines, closure checks | Abstract base class & pure virtual functions (`FarePolicy`), inheritance & `override` (`RegularFare`, `StudentFare`, `SeniorFare`, `DisabledFare`), runtime polymorphism (`farePolicy()`), RAII wrappers (`RouteHolder`, `LineList`), `Metro` constructor/destructor lifecycle, `std::ifstream` seed parsing | Dijkstra, Min-Heap, Binary Search, Deque, Doubly Linked List |
+| **Hardik Rawat** | `tickets/` | Ticket booking, cancellation, expiry, priority waiting list, student/women registries, trains | Encapsulated `const`-correct `Metro` queries (`findTicket`, `findWaitEntry`, `lineState`, `nextTrain`), static helpers (`waitPriority`, `priorityName`, `crowdLevel`), default arguments (`womenCardId = 0`), domain/result structs (`Ticket`, `WaitEntry`, `LineState`, `BookingResult`, `StudentRecord`) | BFS, AVL Tree, BST, Queue |
+| **Alok Singh** | `cards/` | Smart cards, tap-in/out, passes, lost cards, admin login/undo, persistence, clock | `friend class Storage` serialization (`std::ofstream`/`std::ifstream`, `std::runtime_error` validation), static class members (`Clock::offsetSeconds_`, `Clock::now()`, `Clock::advanceMinutes()`, `Clock::format()`), encapsulated `Metro` card/admin methods (`Card`, `Trip`, `AdminAction`, `TapOutResult`) | DFS, Hash Table, Stack, Singly Linked List |
+| **Saloni Bisht** | `reports/` | Analytics reports, rush-hour simulation, UI/table formatting, menus, `main()`, test suites | Class composition & presentation separation (`App` holding `Metro& m_`, `ui::Table`), custom exception (`ui::InputClosed` inheriting `std::runtime_error`), `const` analytics method (`Metro::buildReport()`), `main()` CLI bootstrap & exception handling | Graph (Adjacency List), Quick Sort, Merge Sort, Circular Queue |
