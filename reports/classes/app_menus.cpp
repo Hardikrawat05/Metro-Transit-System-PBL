@@ -541,7 +541,7 @@ void App::planJourney()
         ui::error(error);
         return;
     }
-    ui::title("1. Shortest route (least distance) - Dijkstra");
+    ui::title("1. Shortest route ");
     RouteSummary a = printRoute(shortest.route);
 
     RouteHolder fewest;
@@ -554,7 +554,7 @@ void App::planJourney()
     for (int i = 0; same && i < shortest.route.length; i++)
         same = fewest.route.stations[i] == shortest.route.stations[i];
 
-    ui::title("2. Route with the fewest stops - BFS");
+    ui::title("2. Route with the fewest stops  ");
     if (same) {
         ui::info("  Same as route 1: the shortest route also has the fewest stops.");
     } else {
@@ -1143,7 +1143,7 @@ void App::showTickets()
         ui::info("No tickets yet.");
         return;
     }
-    cout << "Sorted by ID using the AVL ticket index (in-order traversal):\n";
+    cout << "Sorted by ID :\n";
     printTicketTable(tickets);
 }
 
@@ -1155,7 +1155,7 @@ void App::showTicketsByFare()
         ui::info("No tickets yet.");
         return;
     }
-    cout << "Highest fare first (sorted with quick sort):\n";
+    cout << "Highest fare first :\n";
     printTicketTable(tickets);
 }
 
@@ -1169,7 +1169,7 @@ void App::showTicketsInRange()
         ui::info("No tickets with IDs " + to_string(lo) + " to " + to_string(hi) + ".");
         return;
     }
-    cout << tickets.size() << " ticket(s) found with an AVL range search:\n";
+    cout << tickets.size() << " ticket(s) found :\n";
     printTicketTable(tickets);
 }
 
