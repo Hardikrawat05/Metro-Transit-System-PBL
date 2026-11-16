@@ -60,89 +60,15 @@ A modular, terminal-based **Metro Transit Management System** built in **C++17**
 
 ![Metro Transit System — System Architecture](assets/system_architecture.jpg)
 
-```mermaid
-flowchart TB
-    classDef bw fill:#ffffff,stroke:#111111,color:#111111,stroke-width:1.5px
-    classDef ctrl fill:#111111,stroke:#ffffff,color:#ffffff,stroke-width:2px
-
-    User["User (Terminal)"]:::bw --> App["CLI Interface (App)"]:::bw
-    App <--> Metro["Metro Controller (Metro Class)"]:::ctrl
-
-    subgraph Modules["Business Logic Modules"]
-        direction LR
-        M1["Journey (journey/classes/)"]:::bw
-        M2["Tickets (tickets/classes/)"]:::bw
-        M3["Cards & Undo (cards/classes/)"]:::bw
-        M4["Reports & Sim (reports/classes/)"]:::bw
-    end
-
-    Metro --> M1
-    Metro --> M2
-    Metro --> M3
-    Metro --> M4
-
-    M1 --> DS["17 Custom Data Structures & Algorithms (*/ds/)"]:::bw
-    M2 --> DS
-    M3 --> DS
-    M4 --> DS
-
-    Seed["Seed Files (data/*.txt)"]:::bw -.->|"First Run"| Metro
-    Metro -.->|"Atomic Save (.tmp)"| Store["File Storage (metro_data.txt)"]:::bw
-
-    style Modules fill:#f2f2f2,stroke:#222222,color:#111111
-    linkStyle default stroke:#888888,stroke-width:1.5px
-```
-
 ### 2. Graph & Routing Engine
 
 All five network features read from the single weighted adjacency-list `Graph` (`reports/ds/graph.cpp`):
 
 ![Metro Transit System — Graph & Routing Engine](assets/graph_routing_engine.jpg)
 
-```mermaid
-flowchart LR
-    classDef bw fill:#ffffff,stroke:#111111,color:#111111,stroke-width:1.5px
-    classDef core fill:#111111,stroke:#ffffff,color:#ffffff,stroke-width:2px
-
-    G["Graph (Adjacency List)"]:::core
-
-    G -->|"Track meters"| D["Dijkstra + Min-Heap"]:::bw --> R1["Shortest Route & Card Fare"]:::bw
-    G -->|"Hop count"| B["BFS + Queue"]:::bw --> R2["Fewest-Stops Route"]:::bw
-    G -->|"Blocked station"| F["DFS + Stack"]:::bw --> R3["Closure Safety Check"]:::bw
-    G -->|"Sorted names"| S["Binary Search"]:::bw --> R4["Station Lookup & Prefix"]:::bw
-    G -->|"Line order"| L["Doubly Linked List"]:::bw --> R5["Bidirectional Line View"]:::bw
-
-    linkStyle default stroke:#888888,stroke-width:1.5px
-```
-
 ### 3. Ticketing & Smart Card Workflow
 
 ![Metro Transit System — Ticketing & Smart Card Workflow](assets/ticketing_smartcard_workflow.jpg)
-
-```mermaid
-flowchart LR
-    classDef bw fill:#ffffff,stroke:#111111,color:#111111,stroke-width:1.5px
-    classDef decision fill:#e6e6e6,stroke:#111111,color:#111111,stroke-width:1.5px
-
-    subgraph Ticketing["Ticket Booking & Waitlist"]
-        direction TB
-        T1["Book Ticket"]:::bw --> T2["Apply FarePolicy Discount"]:::bw
-        T2 --> T3{"Seat Available?"}:::decision
-        T3 -->|Yes| T4["Confirm Ticket (HashMap + AVL + BST)"]:::bw
-        T3 -->|No| T5["Add to Waitlist (2-Key Min-Heap)"]:::bw
-    end
-
-    subgraph Cards["Smart Card Trip"]
-        direction TB
-        C1["Tap In (Balance >= Rs. 10 or Pass)"]:::bw --> C2["Record Entry Station & Time"]:::bw
-        C2 --> C3["Tap Out (Dijkstra Distance Fare)"]:::bw
-        C3 --> C4["Apply Pass / Overstay Penalty & Save Trip"]:::bw
-    end
-
-    style Ticketing fill:#f2f2f2,stroke:#222222,color:#111111
-    style Cards fill:#f2f2f2,stroke:#222222,color:#111111
-    linkStyle default stroke:#888888,stroke-width:1.5px
-```
 
 ---
 
