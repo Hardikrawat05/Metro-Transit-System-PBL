@@ -58,6 +58,8 @@ A modular, terminal-based **Metro Transit Management System** built in **C++17**
 
 `App` handles terminal menus and tables, `Metro` enforces all business rules using 17 custom data structures, and `Storage` saves state atomically to `metro_data.txt`.
 
+![Metro Transit System — System Architecture](assets/system_architecture.jpg)
+
 ```mermaid
 flowchart TB
     classDef bw fill:#ffffff,stroke:#111111,color:#111111,stroke-width:1.5px
