@@ -97,6 +97,8 @@ flowchart TB
 
 All five network features read from the single weighted adjacency-list `Graph` (`reports/ds/graph.cpp`):
 
+![Metro Transit System — Graph & Routing Engine](assets/graph_routing_engine.jpg)
+
 ```mermaid
 flowchart LR
     classDef bw fill:#ffffff,stroke:#111111,color:#111111,stroke-width:1.5px
@@ -114,6 +116,8 @@ flowchart LR
 ```
 
 ### 3. Ticketing & Smart Card Workflow
+
+![Metro Transit System — Ticketing & Smart Card Workflow](assets/ticketing_smartcard_workflow.jpg)
 
 ```mermaid
 flowchart LR
