@@ -290,7 +290,7 @@ Within the same tier, entries are ordered strictly **FIFO** by monotonic sequenc
 
 ### Prerequisites & Build
 
-Requires a **C++17** compiler (`g++` via MSYS2 UCRT64/MinGW-w64 on Windows, GCC, or Clang). Run from the repository root containing `metro.h`.
+Requires a **C++17** compiler (`g++` via MSYS2 UCRT64/MinGW-w64 on Windows). Run from the repository root containing `metro.h`.
 
 **Windows (PowerShell):**
 ```powershell
@@ -298,21 +298,15 @@ g++ -std=c++17 -I. (Get-ChildItem journey,tickets,cards,reports -Recurse -Filter
 .\metro.exe
 ```
 
-**Linux / macOS:**
-```bash
-g++ -std=c++17 -I. $(find journey tickets cards reports -name "*.cpp") -o metro
-./metro
-```
-
-**Explicit File List (Cross-Platform Fallback):**
-```bash
+**Explicit File List:**
+```powershell
 g++ -std=c++17 -I. cards/classes/admin_undo.cpp cards/classes/clock.cpp cards/classes/smart_cards.cpp cards/classes/storage.cpp cards/ds/dfs.cpp cards/ds/hash_table.cpp cards/ds/linked_list.cpp cards/ds/stack.cpp journey/classes/fare_policy.cpp journey/classes/metro_network.cpp journey/classes/seed_loader.cpp journey/ds/binary_search.cpp journey/ds/deque.cpp journey/ds/dijkstra.cpp journey/ds/doubly_linked_list.cpp journey/ds/heap_priority_queue.cpp reports/classes/app_menus.cpp reports/classes/main.cpp reports/classes/reports.cpp reports/classes/simulation.cpp reports/classes/ui.cpp reports/ds/circular_queue.cpp reports/ds/graph.cpp reports/ds/merge_sort.cpp reports/ds/quick_sort.cpp tickets/classes/students_women_cards.cpp tickets/classes/ticket_booking.cpp tickets/classes/trains.cpp tickets/ds/avl_tree.cpp tickets/ds/bfs.cpp tickets/ds/bst.cpp tickets/ds/queue.cpp -o metro
 ```
 
 ### Running & CLI Options
 
-```bash
-./metro [--data FILE] [--seed FOLDER]
+```powershell
+.\metro.exe [--data FILE] [--seed FOLDER]
 ```
 
 - `--data FILE`: Use a custom persistence file instead of `metro_data.txt`.
